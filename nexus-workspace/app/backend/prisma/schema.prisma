@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Agent {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  role        String   @default("worker") // e.g. manager, worker
+  systemPrompt String?
+  positionX   Float?   @default(0)
+  positionY   Float?   @default(0)
+  parentId    String?
+  parent      Agent?   @relation("AgentHierarchy", fields: [parentId], references: [id])
+  children    Agent[]  @relation("AgentHierarchy")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  chatSessions ChatSession[]
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  title     String
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  status    String   @default("pending") // pending, running, done, error
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages  Message[]
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  chatSessionId String
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+  role          String   // user, assistant, system
+  content       String
+  createdAt     DateTime @default(now())
+}
+
+model Config {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
+
+model UsageLog {
+  id          String   @id @default(uuid())
+  agentId     String?
+  engine      String   @default("gemini-cli")
+  tokensIn    Int      @default(0)
+  tokensOut   Int      @default(0)
+  costUsd     Float    @default(0)
+  durationMs  Int      @default(0)
+  createdAt   DateTime @default(now())
+}

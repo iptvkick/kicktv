@@ -1,0 +1,33 @@
+services:
+  openclaw:
+    image: openclaw/openclaw:latest
+    container_name: openclaw_agency
+    restart: always
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+      - "18789:18789"
+    volumes:
+      # Configuração com Gemini 3.1 Flash
+      - ./openclaw.json:/app/openclaw.json
+      # Workspace principal (onde ele atua)
+      - C:\Users\User\Desktop\vscode\DaviCode_Agency:/app/workspace
+      # Cofre de memória do Obsidian
+      - C:\Users\User\Desktop\vscode\DaviCode_Vault:/app/vault
+      # Base do Gemini SOUL (Contexto para Autonomia)
+      - C:\Users\User\Desktop\vscode\gemini:/app/gemini_soul
+      # Permissão MÁXIMA para gerenciar o Docker host
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Dados internos persistentes
+      - openclaw_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - WORKSPACE_PATH=/app/workspace
+      - VAULT_PATH=/app/vault
+      - OPENCLAW_CONFIG=/app/openclaw.json
+    # Modo interativo para autonomia
+    stdin_open: true
+    tty: true
+
+volumes:
+  openclaw_data:

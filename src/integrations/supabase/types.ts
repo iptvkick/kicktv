@@ -14,7 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      system_settings: {
+        Row: {
+          key: string
+          value: Json
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          key: string
+          value: Json
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          key?: string
+          value?: Json
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
+      xtream_servers: {
+        Row: {
+          id: string
+          name: string
+          url: string
+          username: string
+          password: string
+          priority: number
+          is_active: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          url: string
+          username: string
+          password: string
+          priority?: number
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          url?: string
+          username?: string
+          password?: string
+          priority?: number
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+      }
+      subscription_plans: {
+        Row: {
+          id: string
+          name: string
+          duration_months: number
+          base_price: number
+          extra_screen_price: number
+          is_active: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          duration_months: number
+          base_price: number
+          extra_screen_price: number
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          duration_months?: number
+          base_price?: number
+          extra_screen_price?: number
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+      }
+      onboarding_devices: {
+        Row: {
+          id: string
+          name: string
+          icon_name: string
+          order_index: number | null
+          is_active: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          icon_name: string
+          order_index?: number | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          icon_name?: string
+          order_index?: number | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+      }
+      onboarding_steps: {
+        Row: {
+          id: string
+          device_id: string
+          step_number: number
+          title: string
+          description: string
+          media_url: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          device_id: string
+          step_number: number
+          title: string
+          description: string
+          media_url?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          device_id?: string
+          step_number?: number
+          title?: string
+          description?: string
+          media_url?: string | null
+          created_at?: string | null
+        }
+      }
     }
     Views: {
       [_ in never]: never
