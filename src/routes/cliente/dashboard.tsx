@@ -1,11 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Bell, Settings2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/cliente/dashboard")({
   component: DashboardPage,
 });
 
 function DashboardPage() {
+  const [plans, setPlans] = useState<any[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [extraScreens, setExtraScreens] = useState(0);
+
+  useEffect(() => {
+    async function fetchPlans() {
+      const { data } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .eq('is_active', true)
+        .order('base_price', { ascending: true });
+      
+      if (data && data.length > 0) {
+        setPlans(data);
+        setSelectedPlanId(data[0].id);
+      }
+    }
+    fetchPlans();
+  }, []);
+
+  const selectedPlan = plans.find(p => p.id === selectedPlanId);
+  const totalValue = selectedPlan ? Number(selectedPlan.base_price) + (Number(selectedPlan.extra_screen_price) * extraScreens) : 0;
+
   return (
     <main className="flex-1 flex flex-col">
       {/* Topbar */}
@@ -57,18 +82,45 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* Renovação Secção */}
+        {/* Renovação Secção Dinâmica */}
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-bold">Faturas Asaas</h3>
-          <div className="bg-card p-5 rounded-[20px] shadow-sm flex items-center justify-between border border-black/5">
-            <div className="flex flex-col">
-              <span className="font-bold">Renovação Mensal</span>
-              <span className="text-sm text-foreground/60">R$ 35,00 / mês</span>
+          <h3 className="text-lg font-bold">Renovar ou Fazer Upgrade</h3>
+          
+          {plans.length > 0 && selectedPlan ? (
+            <div className="bg-white p-5 rounded-[24px] shadow-sm flex flex-col gap-4 border border-zinc-100">
+              <div className="flex flex-col gap-3">
+                {plans.map(plan => (
+                  <label key={plan.id} className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${selectedPlanId === plan.id ? 'border-accent bg-accent/5' : 'border-zinc-200 hover:border-zinc-300'}`}>
+                    <div className="flex items-center gap-3">
+                      <input type="radio" name="plan" checked={selectedPlanId === plan.id} onChange={() => setSelectedPlanId(plan.id)} className="w-5 h-5 accent-accent" />
+                      <span className="font-bold">{plan.name}</span>
+                    </div>
+                    <span className="font-bold text-accent">R$ {Number(plan.base_price).toFixed(2)}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between mt-2 pt-4 border-t border-zinc-100">
+                <div className="flex flex-col">
+                  <span className="font-bold">Telas Extras (+R$ {Number(selectedPlan.extra_screen_price).toFixed(2)}/cada)</span>
+                  <span className="text-xs text-zinc-500">Adicione pontos para sua casa</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button onClick={() => setExtraScreens(Math.max(0, extraScreens - 1))} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center font-bold text-lg">-</button>
+                  <span className="font-bold text-lg">{extraScreens}</span>
+                  <button onClick={() => setExtraScreens(Math.min(3, extraScreens + 1))} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center font-bold text-lg">+</button>
+                </div>
+              </div>
+
+              <button className="w-full bg-accent text-white py-4 rounded-xl font-bold mt-2 shadow-md hover:bg-zinc-800 transition-colors flex justify-center items-center gap-2">
+                Pagar R$ {totalValue.toFixed(2)} via Asaas
+              </button>
             </div>
-            <button className="bg-accent text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:scale-105 transition-transform">
-              Pagar via PIX
-            </button>
-          </div>
+          ) : (
+            <div className="bg-card p-5 rounded-[20px] shadow-sm flex items-center justify-center">
+               <div className="animate-spin w-6 h-6 border-2 border-accent border-t-transparent rounded-full" />
+            </div>
+          )}
         </div>
 
       </div>
