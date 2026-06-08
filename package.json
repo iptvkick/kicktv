@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "start": "vinxi start",
+    "dev": "vite dev --port 8080",
+    "build": "vite build",
+    "start": "vite start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -17,8 +17,7 @@
     "lucide-react": "^0.474.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.6.0",
-    "vinxi": "^0.5.0"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
