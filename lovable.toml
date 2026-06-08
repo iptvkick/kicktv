@@ -1,3 +1,3 @@
 [run]
-build = "vite build"
-dev = "vite dev --port 8080"
+build = "bunx vite build"
+dev = "bunx vite dev --port 8080"
