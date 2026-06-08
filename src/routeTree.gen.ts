@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ClienteRouteImport } from './routes/cliente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as OnboardingTutorialRouteImport } from './routes/onboarding/tutorial'
 import { Route as ClienteSuporteRouteImport } from './routes/cliente/suporte'
 import { Route as ClientePlayerRouteImport } from './routes/cliente/player'
 import { Route as ClientePerfilRouteImport } from './routes/cliente/perfil'
@@ -23,6 +25,11 @@ import { Route as AdminServidoresRouteImport } from './routes/admin/servidores'
 import { Route as AdminPlanosRouteImport } from './routes/admin/planos'
 import { Route as AdminOnboardingRouteImport } from './routes/admin/onboarding'
 
+const SuporteRoute = SuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClienteRoute = ClienteRouteImport.update({
   id: '/cliente',
   path: '/cliente',
@@ -42,6 +49,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const OnboardingTutorialRoute = OnboardingTutorialRouteImport.update({
+  id: '/onboarding/tutorial',
+  path: '/onboarding/tutorial',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ClienteSuporteRoute = ClienteSuporteRouteImport.update({
   id: '/suporte',
@@ -93,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
+  '/suporte': typeof SuporteRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -102,11 +115,13 @@ export interface FileRoutesByFullPath {
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
   '/cliente/suporte': typeof ClienteSuporteRoute
+  '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente': typeof ClienteRouteWithChildren
+  '/suporte': typeof SuporteRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -116,6 +131,7 @@ export interface FileRoutesByTo {
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
   '/cliente/suporte': typeof ClienteSuporteRoute
+  '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -123,6 +139,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
+  '/suporte': typeof SuporteRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -132,6 +149,7 @@ export interface FileRoutesById {
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
   '/cliente/suporte': typeof ClienteSuporteRoute
+  '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +158,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/cliente'
+    | '/suporte'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -149,11 +168,13 @@ export interface FileRouteTypes {
     | '/cliente/perfil'
     | '/cliente/player'
     | '/cliente/suporte'
+    | '/onboarding/tutorial'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cliente'
+    | '/suporte'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -163,12 +184,14 @@ export interface FileRouteTypes {
     | '/cliente/perfil'
     | '/cliente/player'
     | '/cliente/suporte'
+    | '/onboarding/tutorial'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/cliente'
+    | '/suporte'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -178,6 +201,7 @@ export interface FileRouteTypes {
     | '/cliente/perfil'
     | '/cliente/player'
     | '/cliente/suporte'
+    | '/onboarding/tutorial'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -185,12 +209,21 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   ClienteRoute: typeof ClienteRouteWithChildren
+  SuporteRoute: typeof SuporteRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  OnboardingTutorialRoute: typeof OnboardingTutorialRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/suporte': {
+      id: '/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof SuporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cliente': {
       id: '/cliente'
       path: '/cliente'
@@ -218,6 +251,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/onboarding/tutorial': {
+      id: '/onboarding/tutorial'
+      path: '/onboarding/tutorial'
+      fullPath: '/onboarding/tutorial'
+      preLoaderRoute: typeof OnboardingTutorialRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/cliente/suporte': {
       id: '/cliente/suporte'
@@ -322,8 +362,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   ClienteRoute: ClienteRouteWithChildren,
+  SuporteRoute: SuporteRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  OnboardingTutorialRoute: OnboardingTutorialRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

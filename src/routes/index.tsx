@@ -1,183 +1,188 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Tv, Smartphone, Monitor, ChevronLeft, PlaySquare } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-export const Route = createFileRoute("/")({
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { motion } from 'framer-motion'
+import { Tv, Smartphone, Monitor, Cast, CheckCircle2 } from 'lucide-react'
+
+export const Route = createFileRoute('/')({
   component: LandingPage,
-});
+})
+
+const DEVICES = [
+  { id: 'smart-tv', name: 'Smart TV', icon: Tv, description: 'TV Inteligente' },
+  { id: 'android', name: 'Android', icon: Smartphone, description: 'Celular ou Tablet' },
+  { id: 'iphone', name: 'iPhone / iPad', icon: Smartphone, description: 'iOS' },
+  { id: 'pc', name: 'Computador', icon: Monitor, description: 'Windows ou Mac' },
+  { id: 'tv-box', name: 'TV Box', icon: Cast, description: 'Android TV / Roku' },
+]
 
 function LandingPage() {
-  const [devices, setDevices] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedDevice, setSelectedDevice] = useState<any>(null);
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    async function fetchDevices() {
-      const { data, error } = await supabase
-        .from('onboarding_devices')
-        .select('*')
-        .eq('is_active', true)
-        .order('order_index', { ascending: true });
-      
-      if (!error && data) {
-        setDevices(data);
-      }
-      setIsLoading(false);
-    }
-    fetchDevices();
-  }, []);
-
-  // Mapeamento de strings de ícones para componentes Lucide
-  const iconMap: Record<string, any> = {
-    Tv: Tv,
-    Smartphone: Smartphone,
-    Monitor: Monitor,
-  };
-
-  if (selectedDevice) {
-    return <OnboardingFlow device={selectedDevice} onBack={() => setSelectedDevice(null)} />;
+  const handleDeviceClick = (deviceId: string) => {
+    navigate({ to: '/auth/register', search: { device: deviceId } })
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      {/* Header */}
-      <header className="px-6 pt-12 pb-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold tracking-tight">KickTV</h1>
-        <Link to="/auth/login" className="text-sm font-semibold bg-white px-4 py-2 rounded-full shadow-sm text-foreground">
-          Login
-        </Link>
-      </header>
+    <div className="min-h-screen bg-background font-sans text-foreground selection:bg-accent selection:text-white">
+      {/* Navbar Minimalista */}
+      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
+        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link to="/" className="text-2xl font-bold tracking-tight">KickTV</Link>
+          <div className="flex gap-4 items-center">
+            <Link to="/suporte" className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors">Suporte</Link>
+            <Link to="/auth/login" className="text-sm font-bold bg-white border border-black/5 shadow-sm px-5 py-2.5 rounded-full hover:shadow-md transition-all active:scale-95">
+              Fazer Login
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      <main className="px-6 flex-1 flex flex-col pt-4 pb-32">
+      <main className="max-w-6xl mx-auto px-6 pt-32 pb-24 space-y-32">
         {/* Hero Section */}
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold tracking-tight leading-tight mb-4">
-            A nova era do <br /> entretenimento.
-          </h2>
-          <p className="text-foreground/70 text-lg">
-            Sem travamentos, sem dor de cabeça. Escolha onde vai assistir e receba seu teste grátis agora.
-          </p>
-        </div>
-
-        {/* Onboarding Devices */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/50 mb-2">Onde você quer assistir?</h3>
+        <section className="text-center space-y-8 max-w-3xl mx-auto mt-12">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1]"
+          >
+            Sua TV, <br/><span className="text-foreground/40">Reinventada.</span>
+          </motion.h1>
           
-          {isLoading ? (
-            <div className="flex justify-center p-8">
-              <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" />
-            </div>
-          ) : devices.map((device) => {
-            const Icon = iconMap[device.icon_name] || Tv;
-            return (
-              <button
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-foreground/60 leading-relaxed max-w-2xl mx-auto"
+          >
+            Toda a sua TV em um só lugar. Sem exceção. Canais, filmes, séries e esportes ao vivo. Compatível com todos os seus aparelhos.
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+          >
+            <Link to="/auth/register" className="bg-accent text-white h-14 px-8 rounded-full flex items-center justify-center font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95">
+              Teste Grátis por 4 Horas
+            </Link>
+            <a href="#planos" className="bg-white text-accent h-14 px-8 rounded-full flex items-center justify-center font-bold text-lg border border-black/5 shadow-sm hover:bg-gray-50 transition-colors">
+              Ver Planos
+            </a>
+          </motion.div>
+        </section>
+
+        {/* Device Selection (Funil Entry) */}
+        <section className="space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight">Onde você quer assistir?</h2>
+            <p className="text-foreground/60 mt-2">Escolha seu aparelho e libere seu teste agora.</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {DEVICES.map((device, i) => (
+              <motion.button
                 key={device.id}
-                onClick={() => setSelectedDevice(device)}
-                className="bg-card p-5 rounded-[24px] shadow-sm flex items-center gap-4 border border-black/5 hover:border-black/10 transition-colors text-left group relative overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                onClick={() => handleDeviceClick(device.id)}
+                className="bg-card p-6 rounded-[24px] border border-black/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col items-center text-center gap-4 group"
               >
-                <div className="h-14 w-14 rounded-full bg-background flex items-center justify-center shrink-0">
-                  <Icon className="w-6 h-6 text-foreground" />
+                <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">
+                  <device.icon className="w-8 h-8" />
                 </div>
-                <div className="flex flex-col flex-1">
-                  <span className="font-bold text-lg">{device.name}</span>
-                  <span className="text-sm text-foreground/60">Configuração Rápida</span>
+                <div>
+                  <h3 className="font-bold text-lg">{device.name}</h3>
+                  <p className="text-sm text-foreground/50">{device.description}</p>
                 </div>
-                <div className="h-8 w-8 rounded-full bg-accent text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity absolute right-6">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </button>
-            )
-          })}
-        </div>
+              </motion.button>
+            ))}
+          </div>
+        </section>
+
+        {/* Pricing Preview */}
+        <section id="planos" className="space-y-12 pt-12">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold tracking-tight">Planos simples e diretos.</h2>
+            <p className="text-foreground/60 mt-3 text-lg">Sem taxas escondidas. Cancele quando quiser.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Plano Essencial */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-card p-8 rounded-[32px] border border-black/5 shadow-sm relative overflow-hidden"
+            >
+              <h3 className="text-2xl font-bold">Essencial</h3>
+              <div className="mt-4 mb-8 flex items-baseline gap-1">
+                <span className="text-4xl font-extrabold tracking-tight">R$ 35</span>
+                <span className="text-foreground/50">/mês</span>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {[
+                  'Acesso completo a canais, filmes e séries',
+                  '1 Tela inclusa',
+                  'Tecnologia híbrida Anti-Travamento',
+                  'Suporte 24/7'
+                ].map(feature => (
+                  <li key={feature} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-accent" />
+                    <span className="font-medium text-foreground/80">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link to="/auth/register" className="w-full bg-background border border-black/10 text-foreground h-14 rounded-full flex items-center justify-center font-bold text-lg hover:bg-black/5 transition-colors">
+                Começar Teste
+              </Link>
+            </motion.div>
+
+            {/* Plano Premium */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-accent text-white p-8 rounded-[32px] shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-8 bg-white text-accent px-4 py-1 rounded-b-xl text-sm font-bold shadow-sm">
+                Mais Popular
+              </div>
+              <h3 className="text-2xl font-bold">Premium 4K</h3>
+              <div className="mt-4 mb-8 flex items-baseline gap-1">
+                <span className="text-4xl font-extrabold tracking-tight">R$ 45</span>
+                <span className="text-white/70">/mês</span>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {[
+                  'Tudo do Essencial',
+                  'Catálogo Nexus On-Demand',
+                  'Interface Ultra Fluida',
+                  'Conteúdo +18 Opcional'
+                ].map(feature => (
+                  <li key={feature} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-white/90" />
+                    <span className="font-medium text-white/90">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link to="/auth/register" className="w-full bg-white text-accent h-14 rounded-full flex items-center justify-center font-bold text-lg hover:bg-gray-100 transition-colors">
+                Começar Teste
+              </Link>
+            </motion.div>
+          </div>
+        </section>
       </main>
-
-      {/* Sticky Bottom CTA */}
-      {!selectedDevice && (
-        <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background to-transparent pb-8">
-          <Link to="/auth/register" className="w-full bg-accent text-white h-16 rounded-full flex items-center justify-center font-bold text-lg shadow-xl hover:scale-[1.02] transition-transform">
-            Gerar Teste Grátis (4 Horas)
-          </Link>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function OnboardingFlow({ device, onBack }: { device: any, onBack: () => void }) {
-  const [steps, setSteps] = useState<any[]>([]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchSteps() {
-      const { data } = await supabase
-        .from('onboarding_steps')
-        .select('*')
-        .eq('device_id', device.id)
-        .order('step_number', { ascending: true });
       
-      setSteps(data || []);
-      setIsLoading(false);
-    }
-    fetchSteps();
-  }, [device.id]);
-
-  if (isLoading) return <div className="flex-1 flex justify-center items-center"><div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full" /></div>;
-
-  if (steps.length === 0) return (
-    <div className="p-6 flex flex-col items-center justify-center min-h-screen">
-      <h3 className="text-xl font-bold">Nenhum tutorial encontrado</h3>
-      <button onClick={onBack} className="mt-4 text-accent font-bold">Voltar</button>
+      {/* Footer minimalista */}
+      <footer className="border-t border-black/5 py-12 text-center text-foreground/50 text-sm">
+        <p>© 2026 KickTV. Todos os direitos reservados.</p>
+      </footer>
     </div>
-  );
-
-  const currentStep = steps[currentStepIndex];
-  const isLastStep = currentStepIndex === steps.length - 1;
-
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="px-6 pt-12 pb-4 flex items-center gap-4">
-        <button onClick={onBack} className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-xl font-bold">{device.name}</h1>
-      </header>
-
-      <main className="flex-1 flex flex-col px-6 pb-32">
-        {currentStep.media_url ? (
-          <div className="w-full aspect-video bg-black rounded-3xl overflow-hidden mb-6 shadow-xl relative group">
-            <iframe 
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/${currentStep.media_url}?autoplay=0`} 
-              title="YouTube video player" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen>
-            </iframe>
-          </div>
-        ) : (
-          <div className="w-full aspect-video bg-zinc-100 rounded-3xl mb-6 shadow-sm flex items-center justify-center text-zinc-400">
-            <PlaySquare className="w-12 h-12 opacity-50" />
-          </div>
-        )}
-
-        <div className="flex gap-2 mb-6">
-          {steps.map((_, idx) => (
-            <div key={idx} className={`h-1.5 flex-1 rounded-full ${idx <= currentStepIndex ? 'bg-accent' : 'bg-black/10'}`} />
-          ))}
-        </div>
-
-        <h2 className="text-3xl font-bold mb-3">{currentStep.title}</h2>
-        <p className="text-foreground/70 text-lg leading-relaxed">{currentStep.description}</p>
-      </main>
-
-      <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background to-transparent pb-8">
-        <button 
-          onClick={() => isLastStep ? onBack() : setCurrentStepIndex(i => i + 1)}
-          className="w-full bg-accent text-white h-16 rounded-full flex items-center justify-center font-bold text-lg shadow-xl hover:scale-[1.02] transition-transform"
-        >
-          {isLastStep ? "Concluir" : "Próximo Passo"}
-        </button>
-      </div>
-    </div>
-  );
+  )
 }
