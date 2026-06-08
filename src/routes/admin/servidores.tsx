@@ -1,7 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Server, Plus, ShieldAlert, ArrowUp, ArrowDown, Trash2 } from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
 
 export const Route = createFileRoute('/admin/servidores')({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({ to: '/auth/login' });
+    }
+  },
   component: ServidoresAdminPage,
 })
 

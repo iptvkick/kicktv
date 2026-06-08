@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
@@ -7,6 +7,7 @@ export const Route = createFileRoute('/auth/register')({
 })
 
 function RegisterPage() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -35,7 +36,7 @@ function RegisterPage() {
     }
 
     // Sucesso
-    window.location.href = '/cliente/dashboard'
+    navigate({ to: '/cliente/dashboard' })
   }
 
   return (

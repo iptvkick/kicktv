@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
@@ -7,6 +7,7 @@ export const Route = createFileRoute('/auth/login')({
 })
 
 function LoginPage() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -36,9 +37,9 @@ function LoginPage() {
       .single()
 
     if (profile?.role === 'admin') {
-      window.location.href = '/admin/servidores'
+      navigate({ to: '/admin/servidores' })
     } else {
-      window.location.href = '/cliente/dashboard'
+      navigate({ to: '/cliente/dashboard' })
     }
   }
 
