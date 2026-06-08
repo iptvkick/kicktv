@@ -1,0 +1,3 @@
+[run]
+build = "bunx vite build"
+dev = "bunx vite dev --port 8080"
