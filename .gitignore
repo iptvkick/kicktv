@@ -1,7 +1,21 @@
 dist
+**/dist
+**/.next
 node_modules
+**/node_modules
 gen
 .env
 .env.*
 .antigravity/secrets.md
 .agent/secrets.md
+
+# Ignorar pastas de outros sub-projetos no root
+lp-*
+*-saas
+renew-*
+hermes-*
+nexus-*
+openclaw-*
+painel-*
+portfolio-*
+gerentesmec
