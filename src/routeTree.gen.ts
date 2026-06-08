@@ -17,6 +17,8 @@ import { Route as ClienteSuporteRouteImport } from './routes/cliente/suporte'
 import { Route as ClientePlayerRouteImport } from './routes/cliente/player'
 import { Route as ClientePerfilRouteImport } from './routes/cliente/perfil'
 import { Route as ClienteDashboardRouteImport } from './routes/cliente/dashboard'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminServidoresRouteImport } from './routes/admin/servidores'
 import { Route as AdminPlanosRouteImport } from './routes/admin/planos'
 import { Route as AdminOnboardingRouteImport } from './routes/admin/onboarding'
@@ -61,6 +63,16 @@ const ClienteDashboardRoute = ClienteDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ClienteRoute,
 } as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminServidoresRoute = AdminServidoresRouteImport.update({
   id: '/servidores',
   path: '/servidores',
@@ -84,6 +96,8 @@ export interface FileRoutesByFullPath {
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -96,6 +110,8 @@ export interface FileRoutesByTo {
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -110,6 +126,8 @@ export interface FileRoutesById {
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -125,6 +143,8 @@ export interface FileRouteTypes {
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/auth/login'
+    | '/auth/register'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -137,6 +157,8 @@ export interface FileRouteTypes {
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/auth/login'
+    | '/auth/register'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -150,6 +172,8 @@ export interface FileRouteTypes {
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/auth/login'
+    | '/auth/register'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -161,6 +185,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   ClienteRoute: typeof ClienteRouteWithChildren
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -220,6 +246,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/cliente/dashboard'
       preLoaderRoute: typeof ClienteDashboardRouteImport
       parentRoute: typeof ClienteRoute
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/servidores': {
       id: '/admin/servidores'
@@ -282,6 +322,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   ClienteRoute: ClienteRouteWithChildren,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

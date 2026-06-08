@@ -43,7 +43,7 @@ function LandingPage() {
       {/* Header */}
       <header className="px-6 pt-12 pb-4 flex justify-between items-center">
         <h1 className="text-xl font-bold tracking-tight">KickTV</h1>
-        <Link to="/cliente/dashboard" className="text-sm font-semibold bg-white px-4 py-2 rounded-full shadow-sm">
+        <Link to="/auth/login" className="text-sm font-semibold bg-white px-4 py-2 rounded-full shadow-sm text-foreground">
           Login
         </Link>
       </header>
@@ -92,11 +92,13 @@ function LandingPage() {
       </main>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background to-transparent pb-8">
-        <Link to="/cliente/dashboard" className="w-full bg-accent text-white h-16 rounded-full flex items-center justify-center font-bold text-lg shadow-xl hover:scale-[1.02] transition-transform">
-          Gerar Teste Grátis (4 Horas)
-        </Link>
-      </div>
+      {!selectedDevice && (
+        <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background to-transparent pb-8">
+          <Link to="/auth/register" className="w-full bg-accent text-white h-16 rounded-full flex items-center justify-center font-bold text-lg shadow-xl hover:scale-[1.02] transition-transform">
+            Gerar Teste Grátis (4 Horas)
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
