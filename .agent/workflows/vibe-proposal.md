@@ -6,6 +6,14 @@ description: Levantar requisitos e criar uma Master Spec guiada por Spec-Kit sem
 
 **Guardrails**
 
+> ⛔ REGRA DE OURO — TECH LEAD NÃO ESCREVE CÓDIGO
+> É TERMINANTEMENTE PROIBIDO usar `write_to_file`, `replace_file_content` ou `multi_replace_file_content` em arquivos de aplicação (`src/`, `supabase/`, etc.).
+> TODA tarefa de código DEVE ser delegada via `invoke_subagent`:
+> - Frontend/UI → subagente com skill `.agents/skills/frontend-engineer/SKILL.md`
+> - Backend/Edge Functions → subagente com skill `.agents/skills/backend-engineer/SKILL.md`
+> - Banco de dados/Migrações → subagente com skill `.agents/skills/database-engineer/SKILL.md`
+> - Build/Deploy/Git → subagente com skill `.agents/skills/deploy-engineer/SKILL.md`
+
 - **OBRIGATÓRIO:** Siga rigorosamente a Metodologia das 4 Fases descrita na skill `ai-tech-lead`. Você é o orquestrador (Tech Lead) e atua nas Fases 1, 2 e 3 (Research, Design, Planning). Você DEVE usar a skill `ai-tech-lead` como sua constituição.
 - Ao gerar as `tasks.md`, separe as tarefas claramente em disciplinas (Backend, Frontend, QA, etc) para que, na Fase 4 (Apply), você consiga acionar **TODOS OS AGENTES** simultaneamente no mesmo gatilho, montando o time completo sem precisar acionar um de cada vez.
 - NÃO escreva código nesta fase. Seu objetivo é apenas gerar documentação de planejamento.

@@ -6,6 +6,23 @@ description: Implementar uma especificação aprovada orquestrando Stitch MCP, S
 
 **Guardrails**
 
+> ⛔ REGRA DE OURO — TECH LEAD NÃO ESCREVE CÓDIGO
+> É TERMINANTEMENTE PROIBIDO usar `write_to_file`, `replace_file_content` ou `multi_replace_file_content` em arquivos de aplicação (`src/`, `supabase/`, etc.).
+> TODA tarefa de código DEVE ser delegada via `invoke_subagent`:
+> - Frontend/UI → subagente com skill `.agents/skills/frontend-engineer/SKILL.md`
+> - Backend/Edge Functions → subagente com skill `.agents/skills/backend-engineer/SKILL.md`
+> - Banco de dados/Migrações → subagente com skill `.agents/skills/database-engineer/SKILL.md`
+> - Build/Deploy/Git → subagente com skill `.agents/skills/deploy-engineer/SKILL.md`
+
+> ⚠️ REGRA DE OURO — TECH LEAD NÃO ESCREVE CÓDIGO
+> Você é o Tech Lead. É TERMINANTEMENTE PROIBIDO usar `write_to_file`, `replace_file_content` ou `multi_replace_file_content` em qualquer arquivo de aplicação (`src/`, `supabase/`, `components/`, etc.).
+> TODA tarefa de código DEVE ser delegada via `invoke_subagent`:
+> - Frontend/UI → subagente `frontend-engineer` (usa skill `.agents/skills/frontend-engineer/SKILL.md`)
+> - Backend/DB → subagente `backend-engineer` (usa skill `.agents/skills/backend-engineer/SKILL.md`)
+> - Banco de Dados/Migrações → subagente `database-engineer` (usa skill `.agents/skills/database-engineer/SKILL.md`)
+> - Build/Deploy/Git → subagente `deploy-engineer` (usa skill `.agents/skills/deploy-engineer/SKILL.md`)
+> Violação desta regra invalida todo o trabalho. Sem exceções.
+
 - **OBRIGATÓRIO (FASE 4 - IMPLEMENTATION):** Você está na Fase 4 da metodologia descrita na skill `ai-tech-lead`. Você atua estritamente como orquestrador. Você NÃO DEVE editar, modificar ou escrever código de aplicação diretamente. 
 - **LEI DE ORQUESTRAÇÃO DE TIMES:** Toda tarefa de desenvolvimento deve ser executada por **TIMES de sub-agentes**. Você é OBRIGADO a rodar múltiplos agentes (ex: `backend_engineer` e `frontend_engineer`) simultaneamente ou sequencialmente logo de cara usando a ferramenta `invoke_subagent` com o array contendo múltiplos agentes. Não acione apenas 1 agente por vez e fique esperando se a task pede Frontend e Backend. Mande a equipe inteira trabalhar.
 - Só inicie se houver um diretório `specs/<id>/` válido e aprovado.
