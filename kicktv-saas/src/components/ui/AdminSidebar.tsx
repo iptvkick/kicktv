@@ -2,27 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  ListTree, 
-  Server, 
-  Smartphone,
-  LogOut,
-  Tv
-} from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { Tv, LogOut, Smartphone, Server, ListTree, LayoutDashboard } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 const adminNavItems = [
   { label: "Visão Geral", icon: LayoutDashboard, href: "/admin/dashboard" },
   { label: "Planos", icon: ListTree, href: "/admin/planos" },
   { label: "Servidores", icon: Server, href: "/admin/servidores" },
-  { label: "Tutoriais", icon: Smartphone, href: "/admin/onboarding" },
+  { label: "Tutoriais", icon: Smartphone, href: "/admin/tutoriais" },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

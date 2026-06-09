@@ -30,11 +30,20 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", data.user.id)
         .single();
+
+      if (profileError) {
+        console.error("Erro ao buscar profile:", profileError);
+        setError("Erro ao verificar nível de acesso.");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Profile retornado:", profile);
 
       if (profile?.role === "admin") {
         router.push("/admin/dashboard");
