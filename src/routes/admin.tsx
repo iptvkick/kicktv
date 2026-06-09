@@ -1,48 +1,37 @@
-import { createFileRoute, Outlet, Link } from '@tanstack/react-router'
-import { Server, Settings, MonitorPlay, Wallet } from 'lucide-react'
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { AdminSidebar } from "@/components/ui/AdminSidebar";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 
-export const Route = createFileRoute('/admin')({
+export const Route = createFileRoute("/admin")({
   component: AdminLayout,
-})
+});
 
 function AdminLayout() {
-  return (
-    <div className="flex min-h-screen bg-zinc-50 font-sans text-zinc-900">
-      {/* Sidebar Admin */}
-      <aside className="w-64 bg-zinc-900 text-white flex flex-col fixed h-full z-10 shadow-2xl">
-        <div className="p-6">
-          <h2 className="text-xl font-bold tracking-tight text-white">KickTV Admin</h2>
-          <p className="text-xs text-white/50 uppercase tracking-widest mt-1">Configurações Dinâmicas</p>
-        </div>
-        
-        <nav className="flex-1 flex flex-col gap-2 px-4 mt-6">
-          <Link to="/admin/servidores" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold">
-            <Server className="w-5 h-5" />
-            Servidores Xtream
-          </Link>
-          <Link to="/admin/planos" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold">
-            <Wallet className="w-5 h-5" />
-            Planos (Asaas)
-          </Link>
-          <Link to="/admin/onboarding" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold">
-            <MonitorPlay className="w-5 h-5" />
-            Onboarding Builder
-          </Link>
-        </nav>
-        
-        <div className="p-4 mt-auto">
-          <Link to="/" className="flex items-center justify-center w-full px-4 py-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-sm text-white/70">
-            Sair do Painel
-          </Link>
-        </div>
-      </aside>
+  const { user, role, loading } = useAuth();
+  const navigate = useNavigate();
 
-      {/* Main Content Area */}
-      <main className="ml-64 flex-1 p-8">
-        <div className="max-w-5xl mx-auto">
-          <Outlet />
-        </div>
+  useEffect(() => {
+    if (loading) return;
+    if (!user) navigate({ to: "/auth/login" });
+    else if (role !== "admin") navigate({ to: "/cliente/dashboard" });
+  }, [loading, user, role, navigate]);
+
+  if (loading || !user || role !== "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f6f7]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#212529]" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[#f5f6f7] font-sans text-[#212529]">
+      <AdminSidebar />
+      <main className="flex-1 min-h-screen flex flex-col">
+        <Outlet />
       </main>
     </div>
-  )
+  );
 }
