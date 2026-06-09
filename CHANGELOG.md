@@ -1,6 +1,11 @@
 # Changelog
 
 ## [2026-06-09]
+- **[002-maquina-saas-iptv]** Spec finalizada e arquivada (Fase 1: A Máquina de SaaS IPTV).
+  - Modelagem estrita das tabelas dinâmicas: `onboarding_devices`, `onboarding_steps`, `subscription_plans`, `support_solutions`.
+  - Configuração de banco de dados 100% dinâmico (Fricção Zero) com tutoriais injetados de Sideloading (Roku), Shortcodes (Firestick) e DNS (Smart TVs).
+  - Criação de UI React/TanStack Router com Transições Imersivas (Dark Technical + Liquid Glass).
+  - Criação das Edge Functions `create-trial` e `payment-webhook` para automatizar painel Xtream.
 - **[023-backend-admin-real-data]** Spec finalizada e arquivada.
   - Correção de RLS e tipagens do banco de dados (Adição de coluna `nome` e tabela `integrations`).
   - Refatoração total do Painel Admin (`/admin/servidores`, `/admin/planos`, `/admin/index`) para utilizar dados reais do Supabase.

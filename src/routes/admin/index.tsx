@@ -126,10 +126,10 @@ function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex flex-col p-8 md:p-12 w-full max-w-7xl mx-auto gap-8 animate-in fade-in duration-500">
+    <div className="flex flex-col p-8 md:p-12 w-full max-w-7xl mx-auto gap-8 animate-in fade-in duration-500 min-h-screen">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Visão Geral</h1>
-        <p className="text-gray-500">Métricas e acompanhamento do SaaS. Bem-vindo ao painel de gestão.</p>
+        <h1 className="text-3xl font-display font-bold tracking-tight text-foreground">Visão Geral</h1>
+        <p className="text-foreground/60">Métricas e acompanhamento do SaaS. Bem-vindo ao painel de gestão.</p>
       </header>
 
       {/* Grid de Métricas */}
@@ -137,14 +137,14 @@ function AdminDashboardPage() {
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="bg-white border border-gray-100 p-6 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between h-32 hover:shadow-md transition-shadow">
+            <div key={i} className="liquid-glass p-6 rounded-[24px] flex flex-col justify-between h-32 interactive">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stat.label}</span>
-                <div className="h-8 w-8 rounded-full bg-gray-50 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-gray-400" />
+                <span className="text-xs font-bold text-foreground/50 uppercase tracking-wider">{stat.label}</span>
+                <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-accent-secondary" />
                 </div>
               </div>
-              <span className="text-3xl font-black text-gray-900 tracking-tight">{stat.value}</span>
+              <span className="text-3xl font-display font-black text-foreground tracking-tight">{stat.value}</span>
             </div>
           )
         })}
@@ -153,11 +153,11 @@ function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tabela de Registros */}
         <div className="lg:col-span-2 flex flex-col gap-4">
-          <h2 className="text-lg font-bold text-gray-900">Últimos Registros & Assinaturas</h2>
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] p-6 overflow-hidden">
+          <h2 className="text-lg font-display font-bold text-foreground">Últimos Registros & Assinaturas</h2>
+          <div className="liquid-glass rounded-[24px] p-6 overflow-hidden">
             <div className="flex flex-col w-full overflow-x-auto">
               <div className="min-w-[500px]">
-                <div className="grid grid-cols-4 border-b border-gray-50 pb-4 mb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <div className="grid grid-cols-4 border-b border-white/10 pb-4 mb-4 text-xs font-bold text-foreground/50 uppercase tracking-wider">
                   <span>Usuário</span>
                   <span>Plano</span>
                   <span>Status</span>
@@ -165,14 +165,14 @@ function AdminDashboardPage() {
                 </div>
                 
                 {(!ultimosRegistros || ultimosRegistros.length === 0) ? (
-                  <div className="py-8 text-center text-gray-400 text-sm">Nenhum registro encontrado.</div>
+                  <div className="py-8 text-center text-foreground/40 text-sm">Nenhum registro encontrado.</div>
                 ) : (
                   ultimosRegistros.map((registro: any) => (
-                    <div key={registro.id} className="grid grid-cols-4 items-center py-3 border-b border-gray-50 last:border-0 last:pb-0">
-                      <span className="font-bold text-sm text-gray-900 truncate pr-2">
+                    <div key={registro.id} className="grid grid-cols-4 items-center py-3 border-b border-white/5 last:border-0 last:pb-0 interactive">
+                      <span className="font-bold text-sm text-foreground truncate pr-2">
                         {registro.profiles?.nome || registro.xtream_username}
                       </span>
-                      <span className="text-sm text-gray-600 truncate pr-2">
+                      <span className="text-sm text-foreground/60 truncate pr-2">
                         {registro.url_servidor?.includes('painel') ? 'Premium' : 'Básico'}
                       </span>
                       <div>
@@ -180,7 +180,7 @@ function AdminDashboardPage() {
                           {registro.status}
                         </span>
                       </div>
-                      <span className="text-right text-xs text-gray-400 whitespace-nowrap">
+                      <span className="text-right text-xs text-foreground/40 whitespace-nowrap">
                         {formatTimeAgo(registro.created_at)}
                       </span>
                     </div>
@@ -193,19 +193,19 @@ function AdminDashboardPage() {
 
         {/* Servidores */}
         <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-bold text-gray-900">Status dos Servidores</h2>
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] p-6 flex flex-col gap-5">
+          <h2 className="text-lg font-display font-bold text-foreground">Status dos Servidores</h2>
+          <div className="liquid-glass rounded-[24px] p-6 flex flex-col gap-5">
             {servers.map((server: any) => (
-              <div key={server.id} className="flex items-center gap-4">
-                <div className={`h-3 w-3 rounded-full ${server.status === 'online' ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'}`} />
+              <div key={server.id} className="flex items-center gap-4 interactive">
+                <div className={`h-3 w-3 rounded-full ${server.status === 'online' ? 'bg-cyan-500 animate-pulse shadow-[0_0_8px_#06b6d4]' : 'bg-red-500'}`} />
                 <div className="flex flex-col">
-                  <span className="font-bold text-sm text-gray-900">{server.nome}</span>
-                  <span className="text-xs text-gray-500">{server.ping}ms ping • {server.url_painel}</span>
+                  <span className="font-bold text-sm text-foreground">{server.nome}</span>
+                  <span className="text-xs text-foreground/50">{server.ping}ms ping • {server.url_painel}</span>
                 </div>
               </div>
             ))}
             
-            <button className="mt-2 w-full py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+            <button className="mt-2 w-full py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-foreground hover:bg-white/10 interactive">
               Ver Detalhes
             </button>
           </div>
@@ -214,3 +214,4 @@ function AdminDashboardPage() {
     </div>
   );
 }
+

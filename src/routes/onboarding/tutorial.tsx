@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/integrations/supabase/client'
-import { Copy, Check, Tv, Loader2, ArrowRight } from 'lucide-react'
+import { Copy, Check, Tv, Loader2, ArrowRight, Play, Monitor, Smartphone, CheckCircle2 } from 'lucide-react'
 
 type TutorialSearch = {
   device?: string
@@ -14,75 +14,67 @@ export const Route = createFileRoute('/onboarding/tutorial')({
       device: search.device as string | undefined,
     }
   },
-  component: TutorialPage,
+  component: OnboardingFlow,
 })
 
-function TutorialPage() {
+// Mocks estáticos enquanto os tipos do DB são gerados
+const MOCK_DEVICES = [
+  { id: '1', name: 'Smart TV Samsung / LG', icon: Tv },
+  { id: '2', name: 'Roku TV / Roku Express', icon: Monitor },
+  { id: '3', name: 'Fire TV Stick / Android TV', icon: Tv },
+  { id: '4', name: 'Celular / Computador', icon: Smartphone },
+];
+
+const MOCK_STEPS = [
+  {
+    id: 's1',
+    title: 'Baixe o Aplicativo',
+    description: 'Vá na loja de aplicativos da sua TV e procure por "Smarters Player Lite" ou "IBO Player". Clique em instalar e aguarde.',
+  },
+  {
+    id: 's2',
+    title: 'Abra o Aplicativo',
+    description: 'Ao abrir, você verá uma tela pedindo usuário, senha e URL. Não feche esta tela, você precisará dos dados a seguir.',
+  },
+  {
+    id: 's3',
+    title: 'Gere seu Teste Grátis',
+    description: 'Tudo pronto! Clique no botão abaixo para gerar suas credenciais exclusivas e começar a assistir agora mesmo.',
+  }
+];
+
+function OnboardingFlow() {
   const { device } = Route.useSearch()
   const navigate = useNavigate()
   
-  const [loading, setLoading] = useState(true)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [selectedDevice, setSelectedDevice] = useState(device || '')
+  
+  const [generatingTrial, setGeneratingTrial] = useState(false)
+  const [showTrialModal, setShowTrialModal] = useState(false)
   const [credentials, setCredentials] = useState<{url: string, user: string, pass: string} | null>(null)
-  const [youtubeId, setYoutubeId] = useState<string | null>(null)
   const [copied, setCopied] = useState<'url' | 'user' | 'pass' | null>(null)
 
-  useEffect(() => {
-    async function loadData() {
-      // 1. Check Auth
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        navigate({ to: '/auth/login' })
-        return
-      }
-
-      // 2. Fetch Device Video (Mock or from DB)
-      // Usaremos um video padrão de placeholder se não achar
-      const deviceId = device || 'smart-tv'
-      const { data: step } = await supabase
-        .from('onboarding_steps')
-        .select('video_url')
-        .eq('device_id', deviceId)
-        .order('step_order', { ascending: true })
-        .limit(1)
-        .single()
-      
-      if (step?.video_url) {
-        // Extrair ID do youtube (ex: https://youtu.be/dQw4w9WgXcQ -> dQw4w9WgXcQ)
-        const match = step.video_url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]+)/)
-        if (match) setYoutubeId(match[1])
-      }
-
-      // 3. Fetch Trial Credentials
-      // Em produção, isso bateria numa Edge Function que gera no Xtream.
-      // Para demonstração rápida, buscamos da subscription ativa.
-      const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('xtream_username, xtream_password, xtream_servers(server_url)')
-        .eq('user_id', session.user.id)
-        .eq('status', 'trialing')
-        .single()
-
-      if (sub && sub.xtream_servers) {
-        // @ts-ignore
-        const url = sub.xtream_servers.server_url
-        setCredentials({
-          url: url,
-          user: sub.xtream_username,
-          pass: sub.xtream_password
-        })
-      } else {
-        // Mock fallback case backend isn't ready
-        setCredentials({
-          url: 'http://kicktv.me:8080',
-          user: session.user.id.substring(0, 8),
-          pass: Math.random().toString(36).slice(-8)
-        })
-      }
-
-      setLoading(false)
+  const handleNextStep = () => {
+    if (currentStep < MOCK_STEPS.length - 1) {
+      setCurrentStep(curr => curr + 1)
+    } else {
+      generateTrial()
     }
-    loadData()
-  }, [device, navigate])
+  }
+
+  const generateTrial = async () => {
+    setGeneratingTrial(true)
+    // Simular chamada Edge Function
+    await new Promise(r => setTimeout(r, 1500))
+    setCredentials({
+      url: 'http://painel.kicktv.com:80',
+      user: 'kick_' + Math.random().toString(36).substring(2, 6),
+      pass: Math.random().toString(36).substring(2, 8)
+    })
+    setGeneratingTrial(false)
+    setShowTrialModal(true)
+  }
 
   const copyToClipboard = (text: string, type: 'url' | 'user' | 'pass') => {
     navigator.clipboard.writeText(text)
@@ -90,144 +82,175 @@ function TutorialPage() {
     setTimeout(() => setCopied(null), 2000)
   }
 
-  if (loading) {
+  // Se não escolheu dispositivo, mostra a lista
+  if (!selectedDevice) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <Loader2 className="w-12 h-12 text-accent animate-spin mb-4" />
-        <h2 className="text-xl font-bold">Preparando seu acesso...</h2>
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
+        {/* Ambient Lights */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/20 blur-[120px]" />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl w-full z-10"
+        >
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-6xl font-display font-black tracking-tight mb-4">
+              Onde você vai assistir?
+            </h1>
+            <p className="text-foreground/60 text-lg">Selecione o seu aparelho para ver o passo a passo exato de instalação.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {MOCK_DEVICES.map((dev) => {
+              const Icon = dev.icon
+              return (
+                <button
+                  key={dev.id}
+                  onClick={() => setSelectedDevice(dev.id)}
+                  className="liquid-glass p-6 rounded-[24px] flex items-center gap-6 interactive group text-left"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                    <Icon className="w-7 h-7 text-accent-secondary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-xl">{dev.name}</h3>
+                    <p className="text-sm text-foreground/50 mt-1">Ver tutorial de instalação</p>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </motion.div>
       </div>
     )
   }
 
+  // Fluxo Multi-step
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground py-12 px-6">
-      
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-accent-secondary/10 blur-[120px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/10 blur-[120px]" />
+
+      <div className="max-w-xl w-full z-10 flex flex-col items-center">
         
-        {/* Cabeçalho */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold text-sm mb-6">
-            <Check className="w-4 h-4" />
-            Teste de 4 Horas Liberado!
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Siga o passo a passo</h1>
-          <p className="text-foreground/60 text-lg mt-3">Assista ao vídeo e use as credenciais abaixo para entrar no app.</p>
-        </motion.div>
+        {/* Progress Bar */}
+        <div className="w-full flex items-center gap-2 mb-12">
+          {MOCK_STEPS.map((_, idx) => (
+            <div key={idx} className={`h-2 rounded-full flex-1 transition-all duration-500 ${idx <= currentStep ? 'bg-accent' : 'bg-white/10'}`} />
+          ))}
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
-          
-          {/* Coluna Esquerda: Player do Video */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-card rounded-[32px] overflow-hidden shadow-sm border border-black/5"
-          >
-            <div className="aspect-video bg-black relative">
-              {youtubeId ? (
-                <iframe
-                  src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                ></iframe>
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-white/50 flex-col gap-4">
-                  <Tv className="w-16 h-16" />
-                  <p>Vídeo tutorial não encontrado</p>
-                </div>
-              )}
-            </div>
-            <div className="p-6">
-              <h3 className="font-bold text-xl">Como instalar no seu aparelho</h3>
-              <p className="text-foreground/60 mt-1">Siga exatamente como mostrado no vídeo acima.</p>
-            </div>
-          </motion.div>
-
-          {/* Coluna Direita: Credenciais */}
-          <motion.div 
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-accent text-white rounded-[32px] p-8 shadow-2xl relative overflow-hidden"
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="liquid-glass rounded-[32px] p-8 md:p-10 w-full"
           >
-            {/* Decoração sutil */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-            
-            <h3 className="text-2xl font-bold mb-8">Suas Credenciais</h3>
-
-            <div className="space-y-6">
-              
-              {/* URL */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold uppercase tracking-wider text-white/50">URL do Servidor / DNS</label>
-                <div className="flex items-center gap-2">
-                  <input 
-                    readOnly 
-                    value={credentials?.url || ''} 
-                    className="flex-1 bg-white/10 text-white px-4 py-4 rounded-2xl outline-none font-medium text-lg"
-                  />
-                  <button 
-                    onClick={() => copyToClipboard(credentials?.url || '', 'url')}
-                    className="w-14 h-14 shrink-0 bg-white text-accent rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-colors"
-                  >
-                    {copied === 'url' ? <Check className="w-6 h-6 text-green-600" /> : <Copy className="w-6 h-6" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Usuário */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold uppercase tracking-wider text-white/50">Usuário</label>
-                <div className="flex items-center gap-2">
-                  <input 
-                    readOnly 
-                    value={credentials?.user || ''} 
-                    className="flex-1 bg-white/10 text-white px-4 py-4 rounded-2xl outline-none font-medium text-lg"
-                  />
-                  <button 
-                    onClick={() => copyToClipboard(credentials?.user || '', 'user')}
-                    className="w-14 h-14 shrink-0 bg-white text-accent rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-colors"
-                  >
-                    {copied === 'user' ? <Check className="w-6 h-6 text-green-600" /> : <Copy className="w-6 h-6" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Senha */}
-              <div className="space-y-2">
-                <label className="text-sm font-bold uppercase tracking-wider text-white/50">Senha</label>
-                <div className="flex items-center gap-2">
-                  <input 
-                    readOnly 
-                    value={credentials?.pass || ''} 
-                    className="flex-1 bg-white/10 text-white px-4 py-4 rounded-2xl outline-none font-medium text-lg"
-                  />
-                  <button 
-                    onClick={() => copyToClipboard(credentials?.pass || '', 'pass')}
-                    className="w-14 h-14 shrink-0 bg-white text-accent rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-colors"
-                  >
-                    {copied === 'pass' ? <Check className="w-6 h-6 text-green-600" /> : <Copy className="w-6 h-6" />}
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="mt-10 pt-8 border-t border-white/10">
-              <Link to="/cliente/dashboard" className="w-full bg-white text-accent h-16 rounded-full flex items-center justify-center gap-2 font-bold text-lg hover:bg-gray-100 transition-all hover:gap-4">
-                Ir para o Painel Completo <ArrowRight className="w-5 h-5" />
-              </Link>
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/20 text-accent mb-6 font-bold text-xl">
+              {currentStep + 1}
             </div>
             
+            <h2 className="text-3xl md:text-4xl font-display font-black mb-4">
+              {MOCK_STEPS[currentStep].title}
+            </h2>
+            <p className="text-lg text-foreground/70 mb-8 leading-relaxed">
+              {MOCK_STEPS[currentStep].description}
+            </p>
+
+            {currentStep === MOCK_STEPS.length - 1 ? (
+              <button
+                onClick={handleNextStep}
+                disabled={generatingTrial}
+                className="w-full h-16 rounded-2xl bg-accent hover:bg-accent/90 text-white font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-[0_0_40px_rgba(99,102,241,0.3)] hover:shadow-[0_0_60px_rgba(99,102,241,0.5)] disabled:opacity-50"
+              >
+                {generatingTrial ? (
+                  <><Loader2 className="w-6 h-6 animate-spin" /> Gerando seu acesso...</>
+                ) : (
+                  <><Play className="w-6 h-6 fill-current" /> Instalei, Gerar Teste</>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={handleNextStep}
+                className="w-full h-16 rounded-2xl bg-white text-background font-bold text-lg transition-all flex items-center justify-center gap-2 hover:bg-white/90"
+              >
+                Próximo Passo <ArrowRight className="w-5 h-5" />
+              </button>
+            )}
           </motion.div>
+        </AnimatePresence>
 
-        </div>
       </div>
+
+      {/* Trial Modal */}
+      <AnimatePresence>
+        {showTrialModal && credentials && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-background/80 backdrop-blur-xl"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="liquid-glass border border-accent/20 rounded-[32px] p-8 max-w-md w-full relative z-10 shadow-[0_0_80px_rgba(99,102,241,0.15)]"
+            >
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-accent rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.5)] border-4 border-background">
+                <CheckCircle2 className="w-12 h-12 text-white" />
+              </div>
+
+              <div className="text-center mt-10 mb-8">
+                <h3 className="text-2xl font-display font-black">Teste Liberado!</h3>
+                <p className="text-foreground/60 mt-2">Insira os dados abaixo no aplicativo que você acabou de instalar.</p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'URL / DNS', value: credentials.url, key: 'url' as const },
+                  { label: 'Usuário', value: credentials.user, key: 'user' as const },
+                  { label: 'Senha', value: credentials.pass, key: 'pass' as const },
+                ].map((item) => (
+                  <div key={item.key} className="relative">
+                    <label className="text-xs font-bold uppercase tracking-wider text-foreground/50 ml-4 mb-1 block">
+                      {item.label}
+                    </label>
+                    <div className="flex bg-black/20 rounded-2xl border border-white/5 overflow-hidden">
+                      <input 
+                        readOnly 
+                        value={item.value} 
+                        className="flex-1 bg-transparent px-4 py-4 text-white font-medium outline-none"
+                      />
+                      <button 
+                        onClick={() => copyToClipboard(item.value, item.key)}
+                        className="w-16 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors border-l border-white/5"
+                      >
+                        {copied === item.key ? <Check className="w-5 h-5 text-accent-secondary" /> : <Copy className="w-5 h-5 text-foreground/70" />}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => navigate({ to: '/cliente/dashboard' })}
+                className="w-full h-14 mt-8 rounded-xl bg-white/10 hover:bg-white/20 font-bold transition-colors"
+              >
+                Ir para meu Painel
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   )
 }
+
