@@ -1,8 +1,6 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, useLocation } from "@tanstack/react-router";
 import {
   Home,
   MonitorPlay,
@@ -23,26 +21,30 @@ const clientNavItems = [
 ];
 
 const adminNavItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
-  { label: "Planos", icon: ListTree, href: "/admin/planos" },
-  { label: "Servidores", icon: Server, href: "/admin/servidores" },
-  { label: "Tutoriais", icon: Smartphone, href: "/admin/onboarding" },
+  { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
+  { label: "Planos", icon: ListTree, href: "/admin" },
+  { label: "Servidores", icon: Server, href: "/admin" },
+  { label: "Tutoriais", icon: Smartphone, href: "/admin" },
 ];
 
 const MOBILE_LABEL_WIDTH = 72;
+
+type BottomNavBarProps = {
+  className?: string;
+  role?: "admin" | "client";
+  stickyBottom?: boolean;
+};
 
 export function BottomNavBar({
   className,
   role = "client",
   stickyBottom = true,
-}: {
-  className?: string;
-  role?: "admin" | "client";
-  stickyBottom?: boolean;
-}) {
-  const pathname = usePathname();
+}: BottomNavBarProps) {
   const router = useRouter();
+  const location = useLocation();
+  const pathname = location.pathname;
   
+  // Auto-detect role based on URL if not explicitly provided
   const activeRole = pathname.startsWith("/admin") ? "admin" : role;
   const navItems = activeRole === "admin" ? adminNavItems : clientNavItems;
 
@@ -57,7 +59,7 @@ export function BottomNavBar({
 
   const handleNavigate = (idx: number, href: string) => {
     setActiveIndex(idx);
-    router.push(href);
+    router.navigate({ to: href });
   };
 
   return (
@@ -68,7 +70,7 @@ export function BottomNavBar({
       role="navigation"
       aria-label="Bottom Navigation"
       className={cn(
-        "bg-[#212529] border border-[#2c3136] backdrop-blur-xl rounded-full flex items-center p-2 shadow-2xl space-x-1 min-w-[320px] max-w-[95vw] h-[60px]",
+        "bg-card/90 dark:bg-[#111] border border-border dark:border-[#222] backdrop-blur-xl rounded-full flex items-center p-2 shadow-2xl space-x-1 min-w-[320px] max-w-[95vw] h-[60px]",
         stickyBottom && "fixed inset-x-0 bottom-6 mx-auto z-50 w-fit",
         className,
       )}
@@ -84,8 +86,8 @@ export function BottomNavBar({
             className={cn(
               "flex items-center gap-0 px-4 py-2 rounded-full transition-colors duration-200 relative h-12 min-w-[48px] max-h-[48px]",
               isActive
-                ? "bg-white/10 text-white gap-2 shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]"
-                : "bg-transparent text-white/50 hover:bg-white/5",
+                ? "bg-[#00FF66]/10 text-[#00FF66] gap-2 shadow-[inset_0_0_10px_rgba(0,255,102,0.1)]"
+                : "bg-transparent text-muted-foreground hover:bg-muted/50",
               "focus:outline-none focus-visible:ring-0",
             )}
             onClick={() => handleNavigate(idx, item.href)}
@@ -116,7 +118,7 @@ export function BottomNavBar({
               <span
                 className={cn(
                   "font-bold text-sm whitespace-nowrap select-none transition-opacity duration-200 overflow-hidden text-ellipsis leading-[1.9]",
-                  isActive ? "text-white" : "opacity-0",
+                  isActive ? "text-[#00FF66]" : "opacity-0",
                 )}
                 title={item.label}
               >
@@ -129,5 +131,3 @@ export function BottomNavBar({
     </motion.nav>
   );
 }
-
-export default BottomNavBar;

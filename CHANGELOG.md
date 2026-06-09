@@ -1,6 +1,11 @@
 # Changelog
 
 ## [2026-06-08]
+- **[008-admin-web-dashboard]** e **[009-admin-login-transitions]** Specs finalizadas e arquivadas. 
+  - Restauração rigorosa da Master Spec "Minimalismo Claro". Remoção do tema Neon Green.
+  - Otimização do Dashboard do Cliente com Skeletons (fim do travamento em banco de dados).
+  - Criação de Transições Espaciais (Spatial Navigation com Framer Motion).
+  - Resolução do problema de Permissão de Admin e construção da Interface Widescreen para gestão (AdminSidebar e Layout 100% Web).
 - **[002-dynamic-config]** Spec finalizada e arquivada. 
   - Módulo de Configurações Dinâmicas totalmente implementado.
   - Criadas Edge Functions para Resiliência de Servidores (Fallback) e Renovação de Assinaturas.

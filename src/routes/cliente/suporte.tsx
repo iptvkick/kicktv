@@ -6,13 +6,27 @@ export const Route = createFileRoute("/cliente/suporte")({
 
 function SuportePage() {
   return (
-    <main className="flex-1 flex flex-col p-6 items-center justify-center h-full pt-20">
-      <div className="flex flex-col items-center justify-center text-center gap-4">
-        <div className="h-20 w-20 rounded-full bg-black/5 flex items-center justify-center mb-2">
-          <span className="text-3xl">🛠️</span>
-        </div>
-        <h1 className="text-2xl font-bold">Central de Suporte</h1>
-        <p className="text-foreground/60">Integração do sistema Self-Healing e troca de DNS ocorrerá nas Edge Functions (Fase 4).</p>
+    <main className="flex-1 flex flex-col pt-12 pb-24 px-6">
+      <header className="pb-8">
+        <h1 className="text-2xl font-bold tracking-tight text-white mb-2">Central de Suporte</h1>
+        <p className="text-sm text-muted-foreground">Como podemos te ajudar hoje?</p>
+      </header>
+
+      <div className="flex flex-col gap-4">
+        <button className="flex flex-col items-start bg-zinc-900 border border-white/5 p-6 rounded-2xl hover:border-[#00FF66]/50 hover:bg-zinc-800 transition-all text-left shadow-lg">
+          <h2 className="text-lg font-bold text-white mb-1">Dúvidas Frequentes (FAQ)</h2>
+          <p className="text-sm text-white/60">Acesse nossos tutoriais e veja como instalar no seu dispositivo.</p>
+        </button>
+
+        <button className="flex flex-col items-start bg-zinc-900 border border-white/5 p-6 rounded-2xl hover:border-[#00FF66]/50 hover:bg-zinc-800 transition-all text-left shadow-lg">
+          <h2 className="text-lg font-bold text-white mb-1">Contato WhatsApp</h2>
+          <p className="text-sm text-white/60">Fale com um de nossos atendentes em tempo real.</p>
+        </button>
+
+        <button className="flex flex-col items-start bg-zinc-900 border border-white/5 p-6 rounded-2xl hover:border-[#00FF66]/50 hover:bg-zinc-800 transition-all text-left shadow-lg">
+          <h2 className="text-lg font-bold text-white mb-1">Problemas Técnicos</h2>
+          <p className="text-sm text-white/60">Relate travamentos ou canais fora do ar.</p>
+        </button>
       </div>
     </main>
   );
