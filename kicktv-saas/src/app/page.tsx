@@ -14,11 +14,11 @@ const DEVICES = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary selection:text-primary-foreground relative grain overflow-hidden">
+    <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary selection:text-primary-foreground relative overflow-hidden">
       
-      {/* Mesh Gradient Decorativo (Glow / Atmosfera) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-accent/20 blur-[100px] rounded-full pointer-events-none opacity-40" />
+      {/* Mesh Gradient Decorativo (Glow / Atmosfera) - Tema Claro */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-slate-200 blur-[100px] rounded-full pointer-events-none opacity-40" />
 
       {/* Navbar Glassmórfica */}
       <nav className="fixed top-0 w-full z-50 glass-panel border-b-0 rounded-b-3xl">
@@ -29,7 +29,7 @@ export default function LandingPage() {
           </Link>
           <div className="flex gap-4 items-center">
             <Link href="/auth/login">
-              <Button variant="outline" className="font-bold rounded-full hover-lift border-white/10 bg-white/5 backdrop-blur-md text-white">
+              <Button variant="outline" className="font-bold rounded-full hover-lift border-gray-200 bg-white/50 backdrop-blur-md text-gray-900">
                 Fazer Login
               </Button>
             </Link>
@@ -71,7 +71,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <a href="#planos" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full h-14 px-8 rounded-full font-bold text-lg hover-lift glass-panel border-white/10">
+              <Button variant="outline" size="lg" className="w-full h-14 px-8 rounded-full font-bold text-lg hover-lift glass-panel border-gray-200 text-gray-900">
                 Ver Planos
               </Button>
             </a>
@@ -94,9 +94,9 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="glass-panel border-white/10 hover-lift h-full bg-card/40 hover:bg-card/60 transition-colors cursor-pointer group border-b-2 hover:border-b-primary">
+                <Card className="glass-panel border-gray-200 hover-lift h-full bg-white/40 hover:bg-white/60 transition-colors cursor-pointer group border-b-2 hover:border-b-primary shadow-sm">
                   <CardContent className="flex flex-col items-center text-center gap-6 p-8">
-                    <div className="w-20 h-20 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-inner">
+                    <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm">
                       <device.icon className="w-10 h-10" />
                     </div>
                     <div>
@@ -124,7 +124,7 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card className="glass-panel border-white/10 h-full flex flex-col hover-lift bg-card/30">
+              <Card className="glass-panel border-gray-200 h-full flex flex-col hover-lift bg-white/50 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-2xl font-display font-bold">Essencial</CardTitle>
                   <div className="mt-4 flex items-baseline gap-1">
@@ -162,9 +162,9 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card className="glass-panel border-primary/50 relative overflow-hidden h-full flex flex-col hover-lift bg-primary/5">
+              <Card className="glass-panel border-primary/30 relative overflow-hidden h-full flex flex-col hover-lift bg-blue-50/50 shadow-md">
                 {/* Glow Background do Card Premium */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 via-transparent to-transparent pointer-events-none" />
                 
                 <div className="absolute top-0 right-8 bg-primary text-primary-foreground px-4 py-1 rounded-b-xl text-sm font-bold shadow-[0_0_15px_rgba(37,99,235,0.5)]">
                   Mais Popular
@@ -186,8 +186,8 @@ export default function LandingPage() {
                       'Conteúdo +18 Opcional'
                     ].map(feature => (
                       <li key={feature} className="flex items-center gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 drop-shadow-[0_0_5px_rgba(37,99,235,0.8)]" />
-                        <span className="font-medium text-white/90">{feature}</span>
+                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 drop-shadow-sm" />
+                        <span className="font-medium text-gray-800">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -205,7 +205,7 @@ export default function LandingPage() {
       </main>
       
       {/* Footer Minimalista */}
-      <footer className="border-t border-white/10 py-12 text-center text-muted-foreground text-sm relative z-10 glass-panel bg-transparent rounded-none mt-12">
+      <footer className="border-t border-gray-200 py-12 text-center text-muted-foreground text-sm relative z-10 glass-panel bg-transparent rounded-none mt-12 shadow-none">
         <p>© 2026 KickTV. Todos os direitos reservados. "A Interface do Usuário é o Produto".</p>
       </footer>
     </div>

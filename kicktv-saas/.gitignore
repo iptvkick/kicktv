@@ -43,3 +43,5 @@ next-env.d.ts
 # agent files
 .antigravity/
 .agent/
+
+.agents/
