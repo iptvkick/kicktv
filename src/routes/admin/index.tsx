@@ -128,7 +128,7 @@ function AdminDashboardPage() {
   return (
     <div className="flex flex-col p-8 md:p-12 w-full max-w-7xl mx-auto gap-8 animate-in fade-in duration-500 min-h-screen">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-display font-bold tracking-tight text-foreground">Visão Geral</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Visão Geral</h1>
         <p className="text-foreground/60">Métricas e acompanhamento do SaaS. Bem-vindo ao painel de gestão.</p>
       </header>
 
@@ -137,14 +137,14 @@ function AdminDashboardPage() {
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="liquid-glass p-6 rounded-[24px] flex flex-col justify-between h-32 interactive">
+            <div key={i} className="bg-card border border-border p-6 rounded-[24px] flex flex-col justify-between h-32 hover:bg-card/90 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-foreground/50 uppercase tracking-wider">{stat.label}</span>
-                <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-accent-secondary" />
+                <div className="h-8 w-8 rounded-full bg-background flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-foreground/80" />
                 </div>
               </div>
-              <span className="text-3xl font-display font-black text-foreground tracking-tight">{stat.value}</span>
+              <span className="text-3xl font-black text-foreground tracking-tight">{stat.value}</span>
             </div>
           )
         })}
@@ -153,11 +153,11 @@ function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tabela de Registros */}
         <div className="lg:col-span-2 flex flex-col gap-4">
-          <h2 className="text-lg font-display font-bold text-foreground">Últimos Registros & Assinaturas</h2>
-          <div className="liquid-glass rounded-[24px] p-6 overflow-hidden">
+          <h2 className="text-lg font-bold text-foreground">Últimos Registros & Assinaturas</h2>
+          <div className="bg-card border border-border rounded-[24px] p-6 overflow-hidden">
             <div className="flex flex-col w-full overflow-x-auto">
               <div className="min-w-[500px]">
-                <div className="grid grid-cols-4 border-b border-white/10 pb-4 mb-4 text-xs font-bold text-foreground/50 uppercase tracking-wider">
+                <div className="grid grid-cols-4 border-b border-border pb-4 mb-4 text-xs font-bold text-foreground/50 uppercase tracking-wider">
                   <span>Usuário</span>
                   <span>Plano</span>
                   <span>Status</span>
@@ -168,7 +168,7 @@ function AdminDashboardPage() {
                   <div className="py-8 text-center text-foreground/40 text-sm">Nenhum registro encontrado.</div>
                 ) : (
                   ultimosRegistros.map((registro: any) => (
-                    <div key={registro.id} className="grid grid-cols-4 items-center py-3 border-b border-white/5 last:border-0 last:pb-0 interactive">
+                    <div key={registro.id} className="grid grid-cols-4 items-center py-3 border-b border-border last:border-0 last:pb-0 hover:bg-black/5 transition-colors">
                       <span className="font-bold text-sm text-foreground truncate pr-2">
                         {registro.profiles?.nome || registro.xtream_username}
                       </span>
@@ -193,11 +193,11 @@ function AdminDashboardPage() {
 
         {/* Servidores */}
         <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-display font-bold text-foreground">Status dos Servidores</h2>
-          <div className="liquid-glass rounded-[24px] p-6 flex flex-col gap-5">
+          <h2 className="text-lg font-bold text-foreground">Status dos Servidores</h2>
+          <div className="bg-card border border-border rounded-[24px] p-6 flex flex-col gap-5">
             {servers.map((server: any) => (
-              <div key={server.id} className="flex items-center gap-4 interactive">
-                <div className={`h-3 w-3 rounded-full ${server.status === 'online' ? 'bg-cyan-500 animate-pulse shadow-[0_0_8px_#06b6d4]' : 'bg-red-500'}`} />
+              <div key={server.id} className="flex items-center gap-4 hover:bg-black/5 p-2 -mx-2 rounded-xl transition-colors">
+                <div className={`h-3 w-3 rounded-full ${server.status === 'online' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                 <div className="flex flex-col">
                   <span className="font-bold text-sm text-foreground">{server.nome}</span>
                   <span className="text-xs text-foreground/50">{server.ping}ms ping • {server.url_painel}</span>
@@ -205,7 +205,7 @@ function AdminDashboardPage() {
               </div>
             ))}
             
-            <button className="mt-2 w-full py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-foreground hover:bg-white/10 interactive">
+            <button className="mt-2 w-full py-2.5 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-black/5 transition-colors">
               Ver Detalhes
             </button>
           </div>

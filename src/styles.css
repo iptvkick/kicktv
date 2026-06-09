@@ -4,16 +4,34 @@
 @plugin "tailwindcss-animate";
 
 :root {
-  /* Dark Technical Theme */
-  --background: #0a0a0f;
-  --foreground: #f8fafc;
-  --card: rgba(255, 255, 255, 0.03);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --accent: #6366f1; /* Indigo */
-  --accent-secondary: #06b6d4; /* Cyan */
+  /* Cores Base do Design (Dribbble Reference) */
+  --background: #f5f6f7;
+  --foreground: #212529;
+  --card: #ffffff;
+  --card-border: #e5e7eb;
   
-  --font-sans: "Inter", sans-serif;
-  --font-display: "Outfit", sans-serif;
+  /* Primary Action - Baseado no Banking App */
+  --primary: #212529;
+  --primary-foreground: #ffffff;
+  
+  /* Accent Color (Verde Neobank/Viagem) */
+  --accent: #a3e635; /* Verde vibrante */
+  --accent-foreground: #212529;
+
+  --radius-card: 1.5rem; /* 24px - Bem arredondado */
+  --radius-pill: 9999px; /* Pill shapes */
+
+  --font-sans: "Instrument Sans", sans-serif;
+}
+
+.dark {
+  --background: #0a0a0f;
+  --foreground: #f5f6f7;
+  --card: #212529;
+  --card-border: #374151;
+  
+  --primary: #f5f6f7;
+  --primary-foreground: #212529;
 }
 
 @theme {
@@ -21,10 +39,13 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-border: var(--card-border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
-  --color-cyan: var(--accent-secondary);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
 }
 
 body {
@@ -32,32 +53,6 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                    radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
-  background-attachment: fixed;
-}
-
-/* Liquid Glass Utilities */
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 1px 2px rgba(0,0,0,0.07),
-    0 4px 8px rgba(0,0,0,0.07),
-    0 16px 32px rgba(0,0,0,0.07),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-/* Base Interactions */
-.interactive {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.interactive:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
 /* Focus Visible */
@@ -65,20 +60,4 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
-}
-
-/* Scroll Animations */
-.fade-in-up {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.fade-in-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Typography Helpers */
-.font-display {
-  font-family: var(--font-display);
 }

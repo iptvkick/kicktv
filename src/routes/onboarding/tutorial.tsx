@@ -17,7 +17,6 @@ export const Route = createFileRoute('/onboarding/tutorial')({
   component: OnboardingFlow,
 })
 
-// Mocks estáticos enquanto os tipos do DB são gerados
 const MOCK_DEVICES = [
   { id: '1', name: 'Smart TV Samsung / LG', icon: Tv },
   { id: '2', name: 'Roku TV / Roku Express', icon: Monitor },
@@ -65,7 +64,6 @@ function OnboardingFlow() {
 
   const generateTrial = async () => {
     setGeneratingTrial(true)
-    // Simular chamada Edge Function
     await new Promise(r => setTimeout(r, 1500))
     setCredentials({
       url: 'http://painel.kicktv.com:80',
@@ -82,20 +80,16 @@ function OnboardingFlow() {
     setTimeout(() => setCopied(null), 2000)
   }
 
-  // Se não escolheu dispositivo, mostra a lista
   if (!selectedDevice) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
-        {/* Ambient Lights */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/20 blur-[120px]" />
-        
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-x-hidden">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-2xl w-full z-10"
         >
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-display font-black tracking-tight mb-4">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-foreground">
               Onde você vai assistir?
             </h1>
             <p className="text-foreground/60 text-lg">Selecione o seu aparelho para ver o passo a passo exato de instalação.</p>
@@ -108,13 +102,13 @@ function OnboardingFlow() {
                 <button
                   key={dev.id}
                   onClick={() => setSelectedDevice(dev.id)}
-                  className="liquid-glass p-6 rounded-[24px] flex items-center gap-6 interactive group text-left"
+                  className="bg-card border border-border p-6 rounded-[24px] flex items-center gap-6 hover:bg-black/5 transition-colors group text-left"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                    <Icon className="w-7 h-7 text-accent-secondary" />
+                  <div className="w-14 h-14 rounded-2xl bg-background border border-border flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <Icon className="w-7 h-7 text-foreground/70 group-hover:text-accent-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-xl">{dev.name}</h3>
+                    <h3 className="font-bold text-xl text-foreground">{dev.name}</h3>
                     <p className="text-sm text-foreground/50 mt-1">Ver tutorial de instalação</p>
                   </div>
                 </button>
@@ -126,18 +120,13 @@ function OnboardingFlow() {
     )
   }
 
-  // Fluxo Multi-step
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-accent-secondary/10 blur-[120px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/10 blur-[120px]" />
-
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background relative overflow-x-hidden">
       <div className="max-w-xl w-full z-10 flex flex-col items-center">
         
-        {/* Progress Bar */}
         <div className="w-full flex items-center gap-2 mb-12">
           {MOCK_STEPS.map((_, idx) => (
-            <div key={idx} className={`h-2 rounded-full flex-1 transition-all duration-500 ${idx <= currentStep ? 'bg-accent' : 'bg-white/10'}`} />
+            <div key={idx} className={`h-2 rounded-full flex-1 transition-all duration-500 ${idx <= currentStep ? 'bg-primary' : 'bg-black/10'}`} />
           ))}
         </div>
 
@@ -148,13 +137,13 @@ function OnboardingFlow() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="liquid-glass rounded-[32px] p-8 md:p-10 w-full"
+            className="bg-card border border-border rounded-[32px] p-8 md:p-10 w-full"
           >
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/20 text-accent mb-6 font-bold text-xl">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-black/5 text-foreground mb-6 font-bold text-xl">
               {currentStep + 1}
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-display font-black mb-4">
+            <h2 className="text-3xl md:text-4xl font-black mb-4 text-foreground">
               {MOCK_STEPS[currentStep].title}
             </h2>
             <p className="text-lg text-foreground/70 mb-8 leading-relaxed">
@@ -165,7 +154,7 @@ function OnboardingFlow() {
               <button
                 onClick={handleNextStep}
                 disabled={generatingTrial}
-                className="w-full h-16 rounded-2xl bg-accent hover:bg-accent/90 text-white font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-[0_0_40px_rgba(99,102,241,0.3)] hover:shadow-[0_0_60px_rgba(99,102,241,0.5)] disabled:opacity-50"
+                className="w-full h-16 rounded-2xl bg-primary hover:opacity-90 text-primary-foreground font-bold text-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {generatingTrial ? (
                   <><Loader2 className="w-6 h-6 animate-spin" /> Gerando seu acesso...</>
@@ -176,7 +165,7 @@ function OnboardingFlow() {
             ) : (
               <button
                 onClick={handleNextStep}
-                className="w-full h-16 rounded-2xl bg-white text-background font-bold text-lg transition-all flex items-center justify-center gap-2 hover:bg-white/90"
+                className="w-full h-16 rounded-2xl border border-border bg-background text-foreground font-bold text-lg transition-all flex items-center justify-center gap-2 hover:bg-black/5"
               >
                 Próximo Passo <ArrowRight className="w-5 h-5" />
               </button>
@@ -186,7 +175,6 @@ function OnboardingFlow() {
 
       </div>
 
-      {/* Trial Modal */}
       <AnimatePresence>
         {showTrialModal && credentials && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -194,21 +182,21 @@ function OnboardingFlow() {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }} 
-              className="absolute inset-0 bg-background/80 backdrop-blur-xl"
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             />
             
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="liquid-glass border border-accent/20 rounded-[32px] p-8 max-w-md w-full relative z-10 shadow-[0_0_80px_rgba(99,102,241,0.15)]"
+              className="bg-card border border-border rounded-[32px] p-8 max-w-md w-full relative z-10"
             >
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-accent rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.5)] border-4 border-background">
-                <CheckCircle2 className="w-12 h-12 text-white" />
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-accent rounded-full flex items-center justify-center border-4 border-background">
+                <CheckCircle2 className="w-12 h-12 text-accent-foreground" />
               </div>
 
               <div className="text-center mt-10 mb-8">
-                <h3 className="text-2xl font-display font-black">Teste Liberado!</h3>
+                <h3 className="text-2xl font-black text-foreground">Teste Liberado!</h3>
                 <p className="text-foreground/60 mt-2">Insira os dados abaixo no aplicativo que você acabou de instalar.</p>
               </div>
 
@@ -222,17 +210,17 @@ function OnboardingFlow() {
                     <label className="text-xs font-bold uppercase tracking-wider text-foreground/50 ml-4 mb-1 block">
                       {item.label}
                     </label>
-                    <div className="flex bg-black/20 rounded-2xl border border-white/5 overflow-hidden">
+                    <div className="flex bg-background rounded-2xl border border-border overflow-hidden">
                       <input 
                         readOnly 
                         value={item.value} 
-                        className="flex-1 bg-transparent px-4 py-4 text-white font-medium outline-none"
+                        className="flex-1 bg-transparent px-4 py-4 text-foreground font-medium outline-none"
                       />
                       <button 
                         onClick={() => copyToClipboard(item.value, item.key)}
-                        className="w-16 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors border-l border-white/5"
+                        className="w-16 flex items-center justify-center bg-black/5 hover:bg-black/10 transition-colors border-l border-border"
                       >
-                        {copied === item.key ? <Check className="w-5 h-5 text-accent-secondary" /> : <Copy className="w-5 h-5 text-foreground/70" />}
+                        {copied === item.key ? <Check className="w-5 h-5 text-accent" /> : <Copy className="w-5 h-5 text-foreground/70" />}
                       </button>
                     </div>
                   </div>
@@ -241,7 +229,7 @@ function OnboardingFlow() {
 
               <button
                 onClick={() => navigate({ to: '/cliente/dashboard' })}
-                className="w-full h-14 mt-8 rounded-xl bg-white/10 hover:bg-white/20 font-bold transition-colors"
+                className="w-full h-14 mt-8 rounded-xl bg-primary hover:opacity-90 text-primary-foreground font-bold transition-colors"
               >
                 Ir para meu Painel
               </button>
@@ -253,4 +241,3 @@ function OnboardingFlow() {
     </div>
   )
 }
-

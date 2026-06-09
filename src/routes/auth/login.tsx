@@ -59,7 +59,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f8f9fa] font-sans relative overflow-hidden px-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background font-sans relative overflow-x-hidden px-6">
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -67,13 +67,13 @@ function LoginPage() {
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="bg-white/70 backdrop-blur-xl border border-black/5 shadow-xl p-6 md:p-8 rounded-[32px]">
+        <div className="bg-card border border-border p-6 md:p-8 rounded-[32px]">
           <div className="text-center space-y-4 pb-8">
-            <div className="mx-auto w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-white font-extrabold text-xl shadow-md">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-extrabold text-xl">
               K
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900">Bem-vindo de volta</h1>
-            <p className="text-zinc-600 text-base">Acesse sua conta para continuar.</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Bem-vindo de volta</h1>
+            <p className="text-foreground/60 text-base">Acesse sua conta para continuar.</p>
           </div>
           
           <div>
@@ -85,12 +85,12 @@ function LoginPage() {
 
             <form onSubmit={handleLogin} className="flex flex-col gap-6">
               <div className="space-y-3">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">E-mail</label>
+                <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider">E-mail</label>
                 <input 
                   type="email" 
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-white border border-gray-200 h-14 px-4 rounded-xl focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 text-zinc-900 font-medium"
+                  className="w-full bg-background border border-border h-14 px-4 rounded-xl focus:outline-none focus:border-primary text-foreground font-medium"
                   placeholder="seu@email.com"
                   required
                 />
@@ -98,14 +98,14 @@ function LoginPage() {
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Senha</label>
-                  <a href="#" className="text-xs font-medium text-zinc-900 hover:underline">Esqueceu a senha?</a>
+                  <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider">Senha</label>
+                  <a href="#" className="text-xs font-medium text-foreground hover:underline">Esqueceu a senha?</a>
                 </div>
                 <input 
                   type="password" 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-white border border-gray-200 h-14 px-4 rounded-xl focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 text-zinc-900 font-medium"
+                  className="w-full bg-background border border-border h-14 px-4 rounded-xl focus:outline-none focus:border-primary text-foreground font-medium"
                   placeholder="••••••••"
                   required
                 />
@@ -114,7 +114,7 @@ function LoginPage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-14 rounded-xl font-bold text-lg flex items-center justify-center bg-zinc-900 text-white mt-2 shadow-md hover:bg-zinc-800 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full h-14 rounded-xl font-bold text-lg flex items-center justify-center bg-primary text-primary-foreground mt-2 hover:opacity-90 transition-all disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Entrar na Conta"}
               </button>

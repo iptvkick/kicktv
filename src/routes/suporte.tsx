@@ -37,9 +37,7 @@ function SuportePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-12 px-6 relative overflow-hidden">
-      {/* Ambient Lights */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-accent-secondary/10 blur-[150px]" />
+    <div className="min-h-screen bg-background text-foreground py-12 px-6 relative overflow-x-hidden">
       
       <div className="max-w-4xl mx-auto space-y-12 z-10 relative">
         
@@ -55,11 +53,11 @@ function SuportePage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center pt-16"
           >
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full font-bold text-sm mb-6 text-accent-secondary">
+            <div className="inline-flex items-center gap-2 bg-card border border-border px-4 py-2 rounded-full font-bold text-sm mb-6 text-foreground">
               <Wrench className="w-4 h-4" />
               Troubleshooting Automatizado
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-black tracking-tight">Resolva problemas em <span className="text-accent">segundos</span></h1>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight">Resolva problemas em <span className="text-accent">segundos</span></h1>
             <p className="text-foreground/60 text-lg mt-3">Selecione o problema que você está enfrentando para obtermos a solução exata.</p>
           </motion.div>
         </div>
@@ -80,13 +78,13 @@ function SuportePage() {
                 <button
                   key={opt.id}
                   onClick={() => handleIssueSelect(opt.id)}
-                  className="liquid-glass p-6 rounded-[24px] flex items-center gap-6 interactive group text-left"
+                  className="bg-card border border-border p-6 rounded-[24px] flex items-center gap-6 hover:bg-card/90 transition-colors text-left group"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                    <opt.icon className="w-7 h-7 text-accent-secondary" />
+                  <div className="w-14 h-14 rounded-2xl bg-background flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <opt.icon className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-xl">{opt.title}</h3>
+                    <h3 className="font-bold text-xl">{opt.title}</h3>
                     <p className="text-sm text-foreground/50 mt-1">{opt.desc}</p>
                   </div>
                 </button>
@@ -98,7 +96,7 @@ function SuportePage() {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
               className="flex flex-col items-center"
             >
-              <h2 className="text-2xl font-display font-bold mb-6">Em qual dispositivo isso acontece?</h2>
+              <h2 className="text-2xl font-bold mb-6">Em qual dispositivo isso acontece?</h2>
               <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
                 {[
                   { id: 'smart-tv', label: 'Smart TV (Samsung/LG)' },
@@ -109,7 +107,7 @@ function SuportePage() {
                   <button
                     key={dev.id}
                     onClick={() => handleDeviceSelect(dev.id)}
-                    className="liquid-glass p-6 rounded-[20px] font-bold text-lg hover:bg-white/10 interactive"
+                    className="bg-card border border-border p-6 rounded-[20px] font-bold text-lg hover:bg-card/90 transition-colors"
                   >
                     {dev.label}
                   </button>
@@ -125,11 +123,11 @@ function SuportePage() {
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               className="flex flex-col items-center"
             >
-              <div className="liquid-glass p-8 md:p-10 rounded-[32px] w-full max-w-3xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 bg-accent h-full shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
+              <div className="bg-card border border-border p-8 md:p-10 rounded-[32px] w-full max-w-3xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-2 bg-accent h-full" />
                 
-                <h3 className="text-xl text-accent-secondary font-bold mb-2 uppercase tracking-wider text-sm">Solução Encontrada</h3>
-                <h2 className="text-3xl font-display font-black mb-6">Siga estes passos:</h2>
+                <h3 className="text-sm text-foreground/50 font-bold mb-2 uppercase tracking-wider">Solução Encontrada</h3>
+                <h2 className="text-3xl font-black mb-6">Siga estes passos:</h2>
                 
                 {loading ? (
                   <div className="flex flex-col items-center justify-center py-12">
@@ -137,17 +135,17 @@ function SuportePage() {
                     <p className="text-foreground/50">Buscando na base de conhecimento...</p>
                   </div>
                 ) : (
-                  <p className="text-lg leading-relaxed text-foreground/80 bg-black/20 p-6 rounded-[20px] border border-white/5">
+                  <p className="text-lg leading-relaxed text-foreground/80 bg-background p-6 rounded-[20px] border border-border">
                     {solution}
                   </p>
                 )}
               </div>
 
-              <div className="flex gap-4 mt-8">
-                <button onClick={() => handleIssueSelect(selectedIssue)} className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 font-bold transition-colors">
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <button onClick={() => handleIssueSelect(selectedIssue)} className="px-6 py-3 rounded-full bg-card border border-border hover:bg-card/90 font-bold transition-colors">
                   Tentar outro dispositivo
                 </button>
-                <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold transition-colors shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="px-6 py-3 rounded-full bg-primary text-primary-foreground hover:opacity-90 font-bold transition-colors text-center">
                   Falar com Humano
                 </a>
               </div>

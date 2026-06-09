@@ -1,6 +1,11 @@
 # Changelog
 
 ## [2026-06-09]
+- **[003-ui-redesign-instrument-sans]** Spec finalizada e arquivada (Redesign Clean Banking/Travel).
+  - Remoção total do estilo "Liquid Glass", animações excessivas e elementos "AI-look".
+  - Implementação global da fonte `Instrument Sans`.
+  - Refatoração da paleta de cores para Solid Light (`#f5f6f7` bg, `#ffffff` cards) e Dark mode, com acento verde vibrante.
+  - Criação da navegação mobile em formato flutuante (Pill Nav) e correção de overflow-x na Landing Page.
 - **[002-maquina-saas-iptv]** Spec finalizada e arquivada (Fase 1: A Máquina de SaaS IPTV).
   - Modelagem estrita das tabelas dinâmicas: `onboarding_devices`, `onboarding_steps`, `subscription_plans`, `support_solutions`.
   - Configuração de banco de dados 100% dinâmico (Fricção Zero) com tutoriais injetados de Sideloading (Roku), Shortcodes (Firestick) e DNS (Smart TVs).

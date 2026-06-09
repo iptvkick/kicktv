@@ -62,10 +62,10 @@ function RegisterPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-md bg-card p-10 rounded-[32px] shadow-sm border border-black/5"
+        className="w-full max-w-md bg-card p-10 rounded-[32px] border border-border"
       >
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center mb-6 shadow-xl">
+          <div className="mx-auto w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-6">
             <PlayCircle className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight">Quase lá!</h1>
@@ -85,7 +85,7 @@ function RegisterPage() {
               type="text" 
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-background px-5 py-4 rounded-2xl border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent/20 font-medium transition-all" 
+              className="bg-background px-5 py-4 rounded-2xl border border-border focus:outline-none focus:border-primary font-medium transition-all" 
               placeholder="João da Silva"
               required
             />
@@ -97,7 +97,7 @@ function RegisterPage() {
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-background px-5 py-4 rounded-2xl border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent/20 font-medium transition-all" 
+              className="bg-background px-5 py-4 rounded-2xl border border-border focus:outline-none focus:border-primary font-medium transition-all" 
               placeholder="joao@exemplo.com"
               required
             />
@@ -109,7 +109,7 @@ function RegisterPage() {
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-background px-5 py-4 rounded-2xl border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent/20 font-medium transition-all" 
+              className="bg-background px-5 py-4 rounded-2xl border border-border focus:outline-none focus:border-primary font-medium transition-all" 
               placeholder="••••••••"
               required
             />
@@ -118,14 +118,14 @@ function RegisterPage() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-accent text-white h-16 rounded-full font-bold text-lg mt-4 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0"
+            className="w-full bg-primary text-primary-foreground h-16 rounded-full font-bold text-lg mt-4 hover:opacity-90 transition-all disabled:opacity-50"
           >
             {loading ? 'Criando Conta...' : 'Liberar meu Acesso'}
           </button>
         </form>
 
         <div className="mt-8 text-center text-sm text-foreground/60">
-          Já tem uma conta? <Link to="/auth/login" className="font-bold text-accent hover:underline">Fazer Login</Link>
+          Já tem uma conta? <Link to="/auth/login" className="font-bold text-foreground hover:underline">Fazer Login</Link>
         </div>
       </motion.div>
     </div>
