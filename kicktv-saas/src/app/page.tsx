@@ -16,8 +16,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary selection:text-primary-foreground relative overflow-hidden">
       
-      {/* Mesh Gradient Decorativo (Glow / Atmosfera) - Tema Claro */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      {/* Decorativo Sutil - Tema Monocromático Claro */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-zinc-100 blur-[120px] rounded-full pointer-events-none opacity-50" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-slate-200 blur-[100px] rounded-full pointer-events-none opacity-40" />
 
       {/* Navbar Glassmórfica */}
@@ -47,7 +47,7 @@ export default function LandingPage() {
             className="text-6xl md:text-[5.5rem] font-display font-extrabold tracking-tighter leading-[1.05]"
           >
             Sua TV, <br/>
-            <span className="text-primary drop-shadow-[0_0_15px_rgba(37,99,235,0.5)]">Reinventada.</span>
+            <span className="text-zinc-900">Reinventada.</span>
           </motion.h1>
           
           <motion.p 
@@ -66,7 +66,7 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-6 justify-center pt-8"
           >
             <Link href="/auth/login" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full h-14 px-8 rounded-full font-bold text-lg animate-cta-pulse hover-lift bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button size="lg" className="w-full h-14 px-8 rounded-full font-bold text-lg hover-lift bg-zinc-900 text-white hover:bg-zinc-800">
                 Teste Grátis por 4 Horas
               </Button>
             </Link>
@@ -162,18 +162,18 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card className="glass-panel border-primary/30 relative overflow-hidden h-full flex flex-col hover-lift bg-blue-50/50 shadow-md">
-                {/* Glow Background do Card Premium */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 via-transparent to-transparent pointer-events-none" />
+              <Card className="glass-panel border-zinc-200 relative overflow-hidden h-full flex flex-col hover-lift bg-white shadow-md">
+                {/* Removido Glow Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-zinc-50 via-transparent to-transparent pointer-events-none" />
                 
-                <div className="absolute top-0 right-8 bg-primary text-primary-foreground px-4 py-1 rounded-b-xl text-sm font-bold shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+                <div className="absolute top-0 right-8 bg-zinc-900 text-white px-4 py-1 rounded-b-xl text-sm font-bold shadow-sm">
                   Mais Popular
                 </div>
                 
                 <CardHeader className="relative z-10">
                   <CardTitle className="text-2xl font-display font-bold">Premium 4K</CardTitle>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-5xl font-display font-extrabold tracking-tight text-primary">R$ 45</span>
+                    <span className="text-5xl font-display font-extrabold tracking-tight text-zinc-900">R$ 45</span>
                     <span className="text-muted-foreground">/mês</span>
                   </div>
                 </CardHeader>
@@ -193,7 +193,7 @@ export default function LandingPage() {
                   </ul>
 
                   <Link href="/auth/login" className="w-full mt-auto">
-                    <Button className="w-full h-14 rounded-full font-bold text-lg hover-lift bg-primary text-primary-foreground shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                    <Button className="w-full h-14 rounded-full font-bold text-lg hover-lift bg-zinc-900 text-white shadow-sm hover:bg-zinc-800">
                       Começar Teste
                     </Button>
                   </Link>

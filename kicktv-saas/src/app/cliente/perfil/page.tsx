@@ -21,38 +21,42 @@ export default function PerfilPage() {
   };
 
   return (
-    <main className="flex-1 flex flex-col pt-12 pb-24 px-6">
+    <main className="flex-1 flex flex-col pt-12 pb-24 px-6 bg-slate-50 min-h-screen">
       <header className="pb-8 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center">
-          <UserIcon className="w-8 h-8 text-white/50" />
+        <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center shadow-sm">
+          <UserIcon className="w-8 h-8 text-white" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight text-white">Meu Perfil</h1>
-          <p className="text-sm text-[#00FF66] font-mono">{email || "Carregando..."}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Meu Perfil</h1>
+          {email ? (
+            <p className="text-sm text-zinc-500">{email}</p>
+          ) : (
+            <div className="h-4 w-32 bg-zinc-200 animate-pulse rounded mt-1" />
+          )}
         </div>
       </header>
 
-      <div className="flex flex-col gap-3">
-        <div className="bg-zinc-900/50 rounded-[20px] border border-white/5 overflow-hidden">
-          <button className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors text-left">
-            <UserIcon className="w-5 h-5 text-white/70" />
-            <span className="font-medium text-white/90">Dados Pessoais</span>
+      <div className="flex flex-col gap-4">
+        <div className="bg-white rounded-[32px] border border-zinc-200 overflow-hidden shadow-sm">
+          <button className="w-full flex items-center gap-4 p-5 hover:bg-zinc-50 transition-colors text-left">
+            <UserIcon className="w-5 h-5 text-zinc-500" />
+            <span className="font-semibold text-zinc-900">Dados Pessoais</span>
           </button>
-          <div className="h-[1px] w-full bg-white/5" />
-          <button className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors text-left">
-            <CreditCard className="w-5 h-5 text-white/70" />
-            <span className="font-medium text-white/90">Métodos de Pagamento</span>
+          <div className="h-[1px] w-full bg-zinc-100" />
+          <button className="w-full flex items-center gap-4 p-5 hover:bg-zinc-50 transition-colors text-left">
+            <CreditCard className="w-5 h-5 text-zinc-500" />
+            <span className="font-semibold text-zinc-900">Métodos de Pagamento</span>
           </button>
-          <div className="h-[1px] w-full bg-white/5" />
-          <button className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors text-left">
-            <Shield className="w-5 h-5 text-white/70" />
-            <span className="font-medium text-white/90">Segurança</span>
+          <div className="h-[1px] w-full bg-zinc-100" />
+          <button className="w-full flex items-center gap-4 p-5 hover:bg-zinc-50 transition-colors text-left">
+            <Shield className="w-5 h-5 text-zinc-500" />
+            <span className="font-semibold text-zinc-900">Segurança</span>
           </button>
         </div>
 
         <button 
           onClick={handleLogout}
-          className="mt-6 w-full flex items-center justify-center gap-2 p-4 rounded-[20px] bg-red-500/10 text-red-500 font-bold hover:bg-red-500/20 transition-colors border border-red-500/20"
+          className="mt-4 w-full flex items-center justify-center gap-2 p-5 rounded-[32px] bg-white text-red-600 font-bold hover:bg-zinc-50 transition-colors border border-zinc-200 shadow-sm"
         >
           <LogOut className="w-5 h-5" />
           Sair da Conta
