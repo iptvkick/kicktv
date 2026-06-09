@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
@@ -39,7 +39,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     prevPathRef.current = pathname;
   }, [pathname]);
 
-  const variants = {
+  const variants: Variants = {
     initial: (dir: number) => ({
       opacity: 0,
       x: dir === 1 ? 50 : dir === -1 ? -50 : 0,
