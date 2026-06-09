@@ -38,7 +38,7 @@ function TutorialPage() {
       // 2. Fetch Device Video (Mock or from DB)
       // Usaremos um video padrão de placeholder se não achar
       const deviceId = device || 'smart-tv'
-      const { data: step } = await supabase
+      const { data: step } = await (supabase as any)
         .from('onboarding_steps')
         .select('video_url')
         .eq('device_id', deviceId)
@@ -47,37 +47,32 @@ function TutorialPage() {
         .single()
       
       if (step?.video_url) {
-        // Extrair ID do youtube (ex: https://youtu.be/dQw4w9WgXcQ -> dQw4w9WgXcQ)
         const match = step.video_url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([^&?]+)/)
         if (match) setYoutubeId(match[1])
       }
 
-      // 3. Fetch Trial Credentials
-      // Em produção, isso bateria numa Edge Function que gera no Xtream.
-      // Para demonstração rápida, buscamos da subscription ativa.
-      const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('xtream_username, xtream_password, xtream_servers(server_url)')
+      const { data: sub } = await (supabase as any)
+        .from('iptv_subscriptions')
+        .select('xtream_username, xtream_password, url_servidor')
         .eq('user_id', session.user.id)
-        .eq('status', 'trialing')
-        .single()
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
 
-      if (sub && sub.xtream_servers) {
-        // @ts-ignore
-        const url = sub.xtream_servers.server_url
+      if (sub) {
         setCredentials({
-          url: url,
+          url: sub.url_servidor,
           user: sub.xtream_username,
           pass: sub.xtream_password
         })
       } else {
-        // Mock fallback case backend isn't ready
         setCredentials({
           url: 'http://kicktv.me:8080',
           user: session.user.id.substring(0, 8),
           pass: Math.random().toString(36).slice(-8)
         })
       }
+
 
       setLoading(false)
     }
