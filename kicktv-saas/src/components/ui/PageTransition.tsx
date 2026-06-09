@@ -39,23 +39,29 @@ export default function PageTransition({ children }: { children: React.ReactNode
     prevPathRef.current = pathname;
   }, [pathname]);
 
+  const isAdmin = pathname.startsWith("/admin");
+
   const variants: Variants = {
     initial: (dir: number) => ({
       opacity: 0,
-      x: dir === 1 ? 50 : dir === -1 ? -50 : 0,
-      y: dir === 0 ? 10 : 0,
+      x: isAdmin ? 0 : (dir === 1 ? 50 : dir === -1 ? -50 : 0),
+      y: isAdmin ? 0 : (dir === 0 ? 10 : 0),
     }),
     animate: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } // Efeito Apple (Spring-like)
+      transition: isAdmin 
+        ? { duration: 0.15, ease: "easeOut" } 
+        : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
     },
     exit: (dir: number) => ({
       opacity: 0,
-      x: dir === 1 ? -50 : dir === -1 ? 50 : 0,
-      y: dir === 0 ? -10 : 0,
-      transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+      x: isAdmin ? 0 : (dir === 1 ? -50 : dir === -1 ? 50 : 0),
+      y: isAdmin ? 0 : (dir === 0 ? -10 : 0),
+      transition: isAdmin 
+        ? { duration: 0.15, ease: "easeIn" }
+        : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
     }),
   };
 

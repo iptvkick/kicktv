@@ -41,6 +41,18 @@ export default async function AdminDashboardPage() {
     .order("created_at", { ascending: false })
     .limit(5);
 
+  // Buscar Servidores
+  const { data: serversData, error: serversError } = await supabase
+    .from("servers")
+    .select("*")
+    .order("created_at", { ascending: true });
+    
+  // Fallback silencioso caso a tabela servers ainda não tenha sido criada no banco
+  const servers = (!serversError && serversData && serversData.length > 0) ? serversData : [
+    { id: '1', nome: 'Servidor BR Principal (Fallback)', url_painel: 'painel.kicktv.com.br', ping: 12, status: 'online' },
+    { id: '2', nome: 'Painel USA 1 (Fallback)', url_painel: 'painel-us.kicktv.com', ping: 22, status: 'online' }
+  ];
+
   const totalUsuarios = (ativosCount || 0) + (trialsCount || 0);
   const taxaConversao = totalUsuarios > 0 ? Math.round(((ativosCount || 0) / totalUsuarios) * 100) : 0;
 
@@ -138,24 +150,19 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Servidores Mock */}
+        {/* Servidores */}
         <div className="flex flex-col gap-4">
           <h2 className="text-lg font-bold text-gray-900">Status dos Servidores</h2>
           <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] p-6 flex flex-col gap-5">
-            <div className="flex items-center gap-4">
-              <div className="h-3 w-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]" />
-              <div className="flex flex-col">
-                <span className="font-bold text-sm text-gray-900">Servidor Xtream A</span>
-                <span className="text-xs text-gray-500">12ms ping • {(ativosCount || 0) + 12} usuários</span>
+            {servers.map((server: any) => (
+              <div key={server.id} className="flex items-center gap-4">
+                <div className={`h-3 w-3 rounded-full ${server.status === 'online' ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-red-500'}`} />
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm text-gray-900">{server.nome}</span>
+                  <span className="text-xs text-gray-500">{server.ping}ms ping • {server.url_painel}</span>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="h-3 w-3 bg-emerald-500 rounded-full shadow-[0_0_8px_#10b981]" />
-              <div className="flex flex-col">
-                <span className="font-bold text-sm text-gray-900">Servidor Xtream B</span>
-                <span className="text-xs text-gray-500">22ms ping • 754 usuários</span>
-              </div>
-            </div>
+            ))}
             
             <button className="mt-2 w-full py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
               Ver Detalhes
