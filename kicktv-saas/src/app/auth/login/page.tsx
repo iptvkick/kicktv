@@ -4,6 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -54,51 +59,77 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f5f6f7] px-6">
-      <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
-        <h1 className="text-3xl font-bold text-[#212529] mb-2">Bem-vindo de volta</h1>
-        <p className="text-gray-500 mb-8">Acesse sua conta para continuar.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background font-sans text-foreground relative grain overflow-hidden px-6">
+      
+      {/* Abstract Glow Backgrounds */}
+      <div className="absolute top-[10%] right-[10%] w-[30%] h-[30%] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
+      <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-accent/10 blur-[100px] rounded-full pointer-events-none opacity-30" />
 
-        {error && (
-          <div className="bg-red-50 text-red-500 p-4 rounded-xl mb-6 text-sm font-semibold border border-red-100">
-            {error}
-          </div>
-        )}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        className="w-full max-w-md relative z-10"
+      >
+        <Card className="glass-modal border-white/10 shadow-2xl p-4 md:p-6">
+          <CardHeader className="text-center space-y-4 pb-8">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-display font-extrabold text-xl shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+              K
+            </div>
+            <CardTitle className="text-3xl font-display font-bold tracking-tight text-white">Bem-vindo de volta</CardTitle>
+            <CardDescription className="text-muted-foreground text-base">Acesse sua conta KickTV para continuar.</CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-6 bg-destructive/10 border-destructive/20 text-destructive-foreground">
+                <AlertDescription className="font-semibold text-sm">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">E-mail</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="bg-[#f5f6f7] p-4 rounded-xl outline-none focus:ring-2 focus:ring-[#212529] transition-all text-[#212529] font-medium"
-              placeholder="seu@email.com"
-              required
-            />
-          </div>
+            <form onSubmit={handleLogin} className="flex flex-col gap-6">
+              <div className="space-y-3">
+                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">E-mail</Label>
+                <Input 
+                  type="email" 
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary text-white font-medium"
+                  placeholder="seu@email.com"
+                  required
+                />
+              </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Senha</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="bg-[#f5f6f7] p-4 rounded-xl outline-none focus:ring-2 focus:ring-[#212529] transition-all text-[#212529] font-medium"
-              placeholder="••••••••"
-              required
-            />
-          </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Senha</Label>
+                  <a href="#" className="text-xs font-medium text-primary hover:underline">Esqueceu a senha?</a>
+                </div>
+                <Input 
+                  type="password" 
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="bg-white/5 border-white/10 h-14 rounded-xl focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary text-white font-medium"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="mt-4 bg-[#212529] text-white p-4 rounded-xl font-bold text-lg hover:bg-[#343a40] transition-colors flex items-center justify-center h-14"
-          >
-            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Entrar na Conta"}
-          </button>
-        </form>
-      </div>
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className="w-full h-14 rounded-xl font-bold text-lg hover-lift bg-primary text-primary-foreground mt-2 shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all"
+              >
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Entrar na Conta"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
+
+import { motion } from "framer-motion";
