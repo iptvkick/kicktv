@@ -7,8 +7,8 @@ export const Route = createFileRoute("/cliente")({
 
 function ClienteLayout() {
   return (
-    <div className="flex flex-col items-center min-h-screen bg-zinc-950">
-      <main className="w-full max-w-md min-h-screen bg-black relative border-x border-white/5 pb-24 flex flex-col">
+    <div className="flex flex-col items-center min-h-screen bg-[#f8f9fa]">
+      <main className="w-full max-w-md min-h-screen bg-[#f8f9fa] relative border-x border-gray-200 pb-24 flex flex-col">
         <Outlet />
         <BottomNavBar role="client" />
       </main>

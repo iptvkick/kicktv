@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-06-09]
+- **[023-backend-admin-real-data]** Spec finalizada e arquivada.
+  - Correção de RLS e tipagens do banco de dados (Adição de coluna `nome` e tabela `integrations`).
+  - Refatoração total do Painel Admin (`/admin/servidores`, `/admin/planos`, `/admin/index`) para utilizar dados reais do Supabase.
+  - Adição da tela de Integrações (Asaas API Keys) e edição de perfis de usuário, operando em paralelo (Frontend/Backend) sob a Metodologia AI Tech Lead.
+
 ## [2026-06-08]
 - **[008-admin-web-dashboard]** e **[009-admin-login-transitions]** Specs finalizadas e arquivadas. 
   - Restauração rigorosa da Master Spec "Minimalismo Claro". Remoção do tema Neon Green.

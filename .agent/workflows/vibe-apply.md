@@ -6,6 +6,8 @@ description: Implementar uma especificação aprovada orquestrando Stitch MCP, S
 
 **Guardrails**
 
+- **OBRIGATÓRIO (FASE 4 - IMPLEMENTATION):** Você está na Fase 4 da metodologia descrita na skill `ai-tech-lead`. Você atua estritamente como orquestrador. Você NÃO DEVE editar, modificar ou escrever código de aplicação diretamente. 
+- **LEI DE ORQUESTRAÇÃO DE TIMES:** Toda tarefa de desenvolvimento deve ser executada por **TIMES de sub-agentes**. Você é OBRIGADO a rodar múltiplos agentes (ex: `backend_engineer` e `frontend_engineer`) simultaneamente ou sequencialmente logo de cara usando a ferramenta `invoke_subagent` com o array contendo múltiplos agentes. Não acione apenas 1 agente por vez e fique esperando se a task pede Frontend e Backend. Mande a equipe inteira trabalhar.
 - Só inicie se houver um diretório `specs/<id>/` válido e aprovado.
 - Priorize delegar tarefas de geração de UI pesada para as ferramentas adequadas (Stitch/Lovable) em vez de escrever HTML/CSS do zero.
 - Siga rigorosamente o checklist em `specs/<id>/tasks.md`.

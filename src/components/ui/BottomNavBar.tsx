@@ -70,7 +70,7 @@ export function BottomNavBar({
       role="navigation"
       aria-label="Bottom Navigation"
       className={cn(
-        "bg-card/90 dark:bg-[#111] border border-border dark:border-[#222] backdrop-blur-xl rounded-full flex items-center p-2 shadow-2xl space-x-1 min-w-[320px] max-w-[95vw] h-[60px]",
+        "bg-white/90 border border-zinc-200 backdrop-blur-xl rounded-full flex items-center p-2 shadow-lg space-x-1 min-w-[320px] max-w-[95vw] h-[60px]",
         stickyBottom && "fixed inset-x-0 bottom-6 mx-auto z-50 w-fit",
         className,
       )}
@@ -86,8 +86,8 @@ export function BottomNavBar({
             className={cn(
               "flex items-center gap-0 px-4 py-2 rounded-full transition-colors duration-200 relative h-12 min-w-[48px] max-h-[48px]",
               isActive
-                ? "bg-[#00FF66]/10 text-[#00FF66] gap-2 shadow-[inset_0_0_10px_rgba(0,255,102,0.1)]"
-                : "bg-transparent text-muted-foreground hover:bg-muted/50",
+                ? "bg-zinc-100 text-zinc-900 gap-2 shadow-sm"
+                : "bg-transparent text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900",
               "focus:outline-none focus-visible:ring-0",
             )}
             onClick={() => handleNavigate(idx, item.href)}
@@ -118,7 +118,7 @@ export function BottomNavBar({
               <span
                 className={cn(
                   "font-bold text-sm whitespace-nowrap select-none transition-opacity duration-200 overflow-hidden text-ellipsis leading-[1.9]",
-                  isActive ? "text-[#00FF66]" : "opacity-0",
+                  isActive ? "text-zinc-900" : "opacity-0",
                 )}
                 title={item.label}
               >
@@ -131,3 +131,4 @@ export function BottomNavBar({
     </motion.nav>
   );
 }
+

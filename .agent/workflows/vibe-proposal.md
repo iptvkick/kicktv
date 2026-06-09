@@ -6,6 +6,8 @@ description: Levantar requisitos e criar uma Master Spec guiada por Spec-Kit sem
 
 **Guardrails**
 
+- **OBRIGATÓRIO:** Siga rigorosamente a Metodologia das 4 Fases descrita na skill `ai-tech-lead`. Você é o orquestrador (Tech Lead) e atua nas Fases 1, 2 e 3 (Research, Design, Planning). Você DEVE usar a skill `ai-tech-lead` como sua constituição.
+- Ao gerar as `tasks.md`, separe as tarefas claramente em disciplinas (Backend, Frontend, QA, etc) para que, na Fase 4 (Apply), você consiga acionar **TODOS OS AGENTES** simultaneamente no mesmo gatilho, montando o time completo sem precisar acionar um de cada vez.
 - NÃO escreva código nesta fase. Seu objetivo é apenas gerar documentação de planejamento.
 - Pergunte ao usuário sobre regras de negócios ou design (caso não fornecido) antes de fechar o spec.
 - Siga as regras de `.antigravity/rules.md` para garantir que o software seja arquitetado para as abstrações do ecossistema (Stitch para UI, Supabase para DB).
