@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Instrument_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "KickTV SaaS",
-  description: "O Melhor Painel de Controle de IPTV",
+  description: "A sua TV, reinventada.",
 };
 
 export default function RootLayout({
@@ -18,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${instrumentSans.variable} antialiased`}>
+    <html lang="pt-BR" className={`${plusJakartaSans.variable} ${spaceGrotesk.variable} dark antialiased`}>
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         {children}
       </body>
