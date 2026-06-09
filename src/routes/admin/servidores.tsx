@@ -1,95 +1,165 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { Server, Plus, ShieldAlert, ArrowUp, ArrowDown, Trash2 } from 'lucide-react'
-import { supabase } from '@/integrations/supabase/client'
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Server, Plus, Trash2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute('/admin/servidores')({
-  beforeLoad: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw redirect({ to: '/auth/login' });
-    }
-  },
+export const Route = createFileRoute("/admin/servidores")({
   component: ServidoresAdminPage,
-})
+});
+
+interface ServerRow {
+  id: string;
+  name: string;
+  m3u_url: string;
+  dns_url: string;
+  is_active: boolean;
+}
 
 function ServidoresAdminPage() {
-  const mockServers = [
-    { id: 1, name: "Xtream Master USA", priority: 1, status: "active", url: "http://master.tv" },
-    { id: 2, name: "Fallback BR", priority: 2, status: "active", url: "http://br.backup.tv" },
-  ]
+  const [servers, setServers] = useState<ServerRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ name: "", m3u_url: "", dns_url: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function reload() {
+    setLoading(true);
+    const { data } = await supabase.from("servers").select("*").order("created_at", { ascending: true });
+    setServers((data as ServerRow[]) ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    reload();
+  }, []);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    const { error: err } = await supabase.from("servers").insert({
+      name: form.name,
+      m3u_url: form.m3u_url,
+      dns_url: form.dns_url,
+      is_active: true,
+    });
+    setSubmitting(false);
+    if (err) {
+      setError(err.message);
+      return;
+    }
+    setForm({ name: "", m3u_url: "", dns_url: "" });
+    setShowForm(false);
+    reload();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Excluir este servidor?")) return;
+    await supabase.from("servers").delete().eq("id", id);
+    reload();
+  }
+
+  async function toggleActive(s: ServerRow) {
+    await supabase.from("servers").update({ is_active: !s.is_active }).eq("id", s.id);
+    reload();
+  }
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-500">
-      <header className="flex justify-between items-end">
+    <div className="flex flex-col gap-8 p-8 md:p-12 w-full max-w-7xl mx-auto">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Servidores Xtream</h1>
-          <p className="text-zinc-500 mt-2">Gerencie seu servidor principal e defina a hierarquia de fallbacks para evitar quedas.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Servidores Xtream</h1>
+          <p className="text-sm text-gray-500 mt-1">Cadastre e gerencie seus painéis de IPTV.</p>
         </div>
-        <button className="bg-zinc-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-zinc-800 transition-colors flex items-center gap-2 shadow-sm">
+        <button
+          onClick={() => setShowForm((v) => !v)}
+          className="bg-[#212529] text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-gray-800 transition-colors"
+        >
           <Plus className="w-4 h-4" />
-          Adicionar Servidor
+          {showForm ? "Cancelar" : "Novo Servidor"}
         </button>
       </header>
 
-      {/* Tabela de Servidores */}
-      <div className="bg-white rounded-[24px] border border-zinc-100 shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-zinc-50 border-b border-zinc-100 text-xs uppercase tracking-wider text-zinc-500">
-              <th className="p-4 font-semibold w-16 text-center">Pri.</th>
-              <th className="p-4 font-semibold">Nome do Servidor</th>
-              <th className="p-4 font-semibold">Status</th>
-              <th className="p-4 font-semibold">URL Base</th>
-              <th className="p-4 font-semibold text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockServers.map((srv, i) => (
-              <tr key={srv.id} className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors group">
-                <td className="p-4">
-                  <div className="flex flex-col items-center gap-1">
-                    <button className="text-zinc-300 hover:text-zinc-900"><ArrowUp className="w-3 h-3" /></button>
-                    <span className="font-bold text-lg leading-none">{srv.priority}</span>
-                    <button className="text-zinc-300 hover:text-zinc-900"><ArrowDown className="w-3 h-3" /></button>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-                      <Server className="w-5 h-5 text-zinc-600" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-zinc-900">{srv.name}</span>
-                      <span className="text-xs text-zinc-500">Usuário Oculto</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    Ativo
-                  </span>
-                </td>
-                <td className="p-4 font-mono text-xs text-zinc-500">{srv.url}</td>
-                <td className="p-4 text-right">
-                  <button className="text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-md hover:bg-red-50">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {showForm && (
+        <form onSubmit={handleCreate} className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col gap-4">
+          {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              required
+              placeholder="Nome (ex: BR Principal)"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#212529]/20"
+            />
+            <input
+              required
+              placeholder="URL M3U"
+              value={form.m3u_url}
+              onChange={(e) => setForm({ ...form, m3u_url: e.target.value })}
+              className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#212529]/20"
+            />
+            <input
+              required
+              placeholder="DNS / Painel URL"
+              value={form.dns_url}
+              onChange={(e) => setForm({ ...form, dns_url: e.target.value })}
+              className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#212529]/20"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="self-start bg-[#212529] text-white px-6 py-3 rounded-xl font-bold text-sm disabled:opacity-50"
+          >
+            {submitting ? "Salvando..." : "Salvar servidor"}
+          </button>
+        </form>
+      )}
 
-      {/* Alerta */}
-      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex gap-4 text-blue-900">
-        <ShieldAlert className="w-6 h-6 shrink-0 text-blue-600" />
-        <div className="flex flex-col">
-          <h4 className="font-bold">Como funciona a Hierarquia?</h4>
-          <p className="text-sm mt-1 text-blue-800/80">Quando um cliente gera um teste grátis ou renova a assinatura, a API do KickTV bate primeiro no servidor com prioridade "1". Se ele não responder (erro 500 ou time-out), o sistema tentará automaticamente o servidor "2", e assim por diante. Suas vendas nunca param.</p>
+      {loading ? (
+        <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
+      ) : servers.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400">
+          <Server className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+          <p className="text-lg font-medium text-gray-900 mb-1">Nenhum servidor cadastrado</p>
+          <p className="text-sm">Clique em "Novo Servidor" para começar.</p>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {servers.map((s) => (
+            <div key={s.id} className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center gap-5">
+                <div className="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                  <Server className="w-5 h-5 text-gray-500" />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="font-bold text-lg text-gray-900">{s.name}</h3>
+                  <span className="text-xs text-gray-500 font-mono">{s.dns_url}</span>
+                  <span className="text-xs text-gray-400 font-mono">{s.m3u_url}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleActive(s)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                    s.is_active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {s.is_active ? "Ativo" : "Inativo"}
+                </button>
+                <button
+                  onClick={() => handleDelete(s.id)}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                  aria-label="Excluir"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  )
+  );
 }

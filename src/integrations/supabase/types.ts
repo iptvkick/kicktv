@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      iptv_subscriptions: {
+        Row: {
+          created_at: string
+          data_vencimento: string
+          dispositivo_principal: string | null
+          id: string
+          status: string
+          updated_at: string
+          url_servidor: string
+          user_id: string
+          xtream_password: string
+          xtream_username: string
+        }
+        Insert: {
+          created_at?: string
+          data_vencimento: string
+          dispositivo_principal?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          url_servidor: string
+          user_id: string
+          xtream_password: string
+          xtream_username: string
+        }
+        Update: {
+          created_at?: string
+          data_vencimento?: string
+          dispositivo_principal?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          url_servidor?: string
+          user_id?: string
+          xtream_password?: string
+          xtream_username?: string
+        }
+        Relationships: []
+      }
       onboarding_devices: {
         Row: {
           created_at: string | null
@@ -108,6 +147,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payments: {
+        Row: {
+          created_at: string
+          gateway_id: string | null
+          id: string
+          metodo: string | null
+          status: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          gateway_id?: string | null
+          id?: string
+          metodo?: string | null
+          status?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          gateway_id?: string | null
+          id?: string
+          metodo?: string | null
+          status?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
       }
       plans: {
         Row: {
@@ -275,6 +344,33 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          categoria: string | null
+          created_at: string
+          id: string
+          mensagem: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          id?: string
+          mensagem: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          id?: string
+          mensagem?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       system_settings: {
         Row: {
           created_at: string | null
@@ -293,6 +389,27 @@ export type Database = {
           key?: string
           updated_at?: string | null
           value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -334,9 +451,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
+      app_role: "admin" | "client"
       subscription_status: "trialing" | "active" | "past_due" | "canceled"
       user_role: "admin" | "client"
     }
@@ -466,6 +591,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "client"],
       subscription_status: ["trialing", "active", "past_due", "canceled"],
       user_role: ["admin", "client"],
     },
