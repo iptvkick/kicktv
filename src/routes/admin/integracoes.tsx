@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Plug, Key, Webhook, RefreshCw, CheckCircle, XCircle, AlertCircle, Play } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Plug, Key, Webhook, RefreshCw, CheckCircle, XCircle, AlertCircle, Play, Shield, Save } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 
 export const Route = createFileRoute('/admin/integracoes')({
@@ -10,6 +10,56 @@ export const Route = createFileRoute('/admin/integracoes')({
 function IntegracoesView() {
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<{ status: 'idle' | 'success' | 'error', message?: string }>({ status: 'idle' })
+
+  const [asaasApiKey, setAsaasApiKey] = useState('')
+  const [asaasWebhookToken, setAsaasWebhookToken] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [isLoadingKeys, setIsLoadingKeys] = useState(true)
+
+  useEffect(() => {
+    async function loadKeys() {
+      try {
+        const { data, error } = await supabase
+          .from('integrations')
+          .select('*')
+          .eq('provider', 'asaas')
+          .maybeSingle()
+        
+        if (data) {
+          setAsaasApiKey(data.api_key || (data.credentials as any)?.apiKey || '')
+          setAsaasWebhookToken((data.credentials as any)?.webhookToken || '')
+        }
+      } catch (err) {
+        console.error('Failed to load integrations:', err)
+      } finally {
+        setIsLoadingKeys(false)
+      }
+    }
+    loadKeys()
+  }, [])
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from('integrations')
+        .upsert(
+          {
+            provider: 'asaas',
+            api_key: asaasApiKey,
+            credentials: { apiKey: asaasApiKey, webhookToken: asaasWebhookToken }
+          },
+          { onConflict: 'provider' }
+        )
+      
+      if (error) throw error
+      alert('Credenciais salvas com sucesso!')
+    } catch (err: any) {
+      alert('Erro ao salvar credenciais: ' + err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleTestConnection = async () => {
     setTesting(true)
@@ -57,16 +107,22 @@ function IntegracoesView() {
             {/* Step 1 */}
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">1</div>
-              <div>
+              <div className="flex-1">
                 <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
                   <Key className="w-4 h-4 text-zinc-400" />
-                  Gerar Access Token
+                  Access Token (API Key)
                 </h3>
                 <p className="text-sm text-zinc-600 mt-1">
-                  Acesse sua conta do Asaas, vá em <strong>Configurações &gt; Integrações &gt; Gerar API Key</strong>. Copie a chave gerada.
+                  Acesse sua conta do Asaas, vá em <strong>Configurações &gt; Integrações &gt; Gerar API Key</strong>.
                 </p>
-                <div className="mt-3 p-3 bg-zinc-50 rounded-lg border border-black/5 text-sm text-zinc-500">
-                  <span className="font-mono text-xs">A chave deve ser colada na tabela <code>integrations</code> do banco de dados (Provider: "asaas").</span>
+                <div className="mt-3">
+                  <input
+                    type="password"
+                    placeholder="$aact_..."
+                    value={asaasApiKey}
+                    onChange={(e) => setAsaasApiKey(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  />
                 </div>
               </div>
             </div>
@@ -74,21 +130,71 @@ function IntegracoesView() {
             {/* Step 2 */}
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">2</div>
-              <div>
+              <div className="flex-1">
                 <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
                   <Webhook className="w-4 h-4 text-zinc-400" />
-                  Configurar Webhooks
+                  Configurar Webhooks & Eventos
                 </h3>
                 <p className="text-sm text-zinc-600 mt-1">
-                  Ainda em Integrações, vá até a aba de <strong>Webhooks</strong> para Cobranças e defina a URL da sua Edge Function.
+                  Em <strong>Webhooks</strong>, defina a URL abaixo e marque os seguintes eventos obrigatórios:
                 </p>
-                <div className="mt-3 p-3 bg-zinc-50 rounded-lg border border-black/5">
+                <div className="mt-3 p-3 bg-zinc-50 rounded-lg border border-black/5 mb-3">
                   <p className="text-xs font-semibold text-zinc-700 mb-1">URL de Produção:</p>
                   <code className="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded break-all">
                     {import.meta.env.VITE_SUPABASE_URL || 'https://[SEU_PROJETO].supabase.co'}/functions/v1/asaas-webhook
                   </code>
                 </div>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-zinc-100 text-zinc-700 rounded-md text-xs font-medium border border-zinc-200">PAYMENT_RECEIVED</span>
+                  <span className="px-2 py-1 bg-zinc-100 text-zinc-700 rounded-md text-xs font-medium border border-zinc-200">PAYMENT_CONFIRMED</span>
+                  <span className="px-2 py-1 bg-rose-50 text-rose-700 rounded-md text-xs font-medium border border-rose-100">PAYMENT_OVERDUE</span>
+                  <span className="px-2 py-1 bg-red-50 text-red-700 rounded-md text-xs font-medium border border-red-100">PAYMENT_DELETED</span>
+                </div>
               </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">3</div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-zinc-400" />
+                  Segurança do Webhook (Token)
+                </h3>
+                <p className="text-sm text-zinc-600 mt-1">
+                  Copie o <strong>Token de Autenticação</strong> gerado nas configurações de webhook do Asaas para garantir que apenas o Asaas possa chamar nossa URL.
+                </p>
+                <div className="mt-3">
+                  <input
+                    type="password"
+                    placeholder="whsec_..."
+                    value={asaasWebhookToken}
+                    onChange={(e) => setAsaasWebhookToken(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Save Action */}
+            <div className="pt-4 border-t border-black/5">
+              <button 
+                onClick={handleSave}
+                disabled={saving || isLoadingKeys}
+                className="w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl font-medium transition-all active:scale-[0.98]"
+              >
+                {saving ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    Salvar Credenciais
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
