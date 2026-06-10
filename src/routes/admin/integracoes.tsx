@@ -89,7 +89,8 @@ function IntegracoesView() {
     setTestResult({ status: 'idle' })
     try {
       const { data, error } = await supabase.functions.invoke('asaas-webhook', { 
-        body: { event: 'PAYMENT_CONFIRMED' } 
+        body: { event: 'PAYMENT_CONFIRMED' },
+        headers: { 'asaas-access-token': asaasWebhookToken }
       })
       
       if (error) {

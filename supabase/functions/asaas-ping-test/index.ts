@@ -20,8 +20,11 @@ serve(async (req) => {
     )
 
     // Verify user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-    if (userError || !user) throw new Error('Unauthorized')
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) throw new Error('Missing Authorization header')
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
+    if (userError || !user) throw new Error(`Unauthorized: ${userError?.message || 'No user found'}`)
 
     // Read Asaas credentials
     const { data: integration, error: intError } = await supabaseClient
