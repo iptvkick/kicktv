@@ -32,11 +32,6 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
     ],
   }),
-  links: () => [
-    { rel: "preconnect", href: "https://fonts.googleapis.com" },
-    { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-    { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" }
-  ],
   component: RootComponent,
 });
 
@@ -53,6 +48,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" />
       </head>
       <body>
         {children}

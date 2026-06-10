@@ -21,9 +21,11 @@ import { Route as ClientePerfilRouteImport } from './routes/cliente/perfil'
 import { Route as ClienteDashboardRouteImport } from './routes/cliente/dashboard'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AdminUsuariosRouteImport } from './routes/admin/usuarios'
 import { Route as AdminServidoresRouteImport } from './routes/admin/servidores'
 import { Route as AdminPlanosRouteImport } from './routes/admin/planos'
 import { Route as AdminOnboardingRouteImport } from './routes/admin/onboarding'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -85,6 +87,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminServidoresRoute = AdminServidoresRouteImport.update({
   id: '/servidores',
   path: '/servidores',
@@ -100,15 +107,22 @@ const AdminOnboardingRoute = AdminOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
@@ -122,9 +136,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
@@ -140,9 +156,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
@@ -159,9 +177,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cliente'
     | '/suporte'
+    | '/admin/configuracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
     | '/cliente/dashboard'
@@ -175,9 +195,11 @@ export interface FileRouteTypes {
     | '/'
     | '/cliente'
     | '/suporte'
+    | '/admin/configuracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
     | '/cliente/dashboard'
@@ -192,9 +214,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cliente'
     | '/suporte'
+    | '/admin/configuracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
+    | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
     | '/cliente/dashboard'
@@ -301,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/servidores': {
       id: '/admin/servidores'
       path: '/servidores'
@@ -322,20 +353,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOnboardingRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminOnboardingRoute: typeof AdminOnboardingRoute
   AdminPlanosRoute: typeof AdminPlanosRoute
   AdminServidoresRoute: typeof AdminServidoresRoute
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminOnboardingRoute: AdminOnboardingRoute,
   AdminPlanosRoute: AdminPlanosRoute,
   AdminServidoresRoute: AdminServidoresRoute,
+  AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

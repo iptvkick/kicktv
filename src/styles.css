@@ -4,19 +4,19 @@
 @plugin "tailwindcss-animate";
 
 :root {
-  /* Cores Base do Design (Dribbble Reference) */
+  /* Cores Base do Design (Monocromático Absoluto) */
   --background: #f5f6f7;
-  --foreground: #212529;
+  --foreground: #111827; /* Dark Gray quase preto */
   --card: #ffffff;
   --card-border: #e5e7eb;
   
   /* Primary Action - Baseado no Banking App */
-  --primary: #212529;
+  --primary: #111827;
   --primary-foreground: #ffffff;
   
-  /* Accent Color (Verde Neobank/Viagem) */
-  --accent: #a3e635; /* Verde vibrante */
-  --accent-foreground: #212529;
+  /* Accent substituto (Preto/Cinza Escuro em vez de Verde) */
+  --accent: #111827;
+  --accent-foreground: #ffffff;
 
   --radius-card: 1.5rem; /* 24px - Bem arredondado */
   --radius-pill: 9999px; /* Pill shapes */
@@ -27,11 +27,14 @@
 .dark {
   --background: #0a0a0f;
   --foreground: #f5f6f7;
-  --card: #212529;
+  --card: #1f2937;
   --card-border: #374151;
   
   --primary: #f5f6f7;
-  --primary-foreground: #212529;
+  --primary-foreground: #0a0a0f;
+
+  --accent: #f5f6f7;
+  --accent-foreground: #0a0a0f;
 }
 
 @theme {

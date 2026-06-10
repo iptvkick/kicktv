@@ -23,9 +23,15 @@ serve(async (req) => {
     )
 
     // 2. Process Events
+    if (!payload.payment) {
+      console.log('Ignorando evento sem objeto payment')
+      return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })
+    }
+
     if (payload.event === 'PAYMENT_RECEIVED' || payload.event === 'PAYMENT_CONFIRMED') {
       const payment = payload.payment
       const subscriptionId = payment.subscription
+      const customerId = payment.customer
 
       if (subscriptionId) {
         // Find subscription and update
@@ -41,6 +47,18 @@ serve(async (req) => {
           .eq('asaas_subscription_id', subscriptionId)
 
         if (error) throw new Error(`DB Update Error: ${error.message}`)
+        
+        // Spec 006: update profile's subscription_end_date
+        if (customerId) {
+          const { error: profileError } = await supabaseAdmin
+            .from('profiles')
+            .update({
+              subscription_end_date: expiresAt
+            })
+            .eq('asaas_customer_id', customerId)
+          if (profileError) console.error(`Profile Update Error: ${profileError.message}`)
+        }
+
         console.log(`Subscription ${subscriptionId} activated until ${expiresAt}`)
       }
     } 

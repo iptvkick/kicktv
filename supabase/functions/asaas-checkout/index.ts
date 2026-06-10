@@ -36,7 +36,7 @@ serve(async (req) => {
     let customerId = profile?.asaas_customer_id
 
     const ASAAS_API_KEY = Deno.env.get('ASAAS_API_KEY')
-    const ASAAS_URL = 'https://sandbox.asaas.com/api/v3' // Use sandbox for testing
+    const ASAAS_URL = Deno.env.get('ASAAS_API_URL') || 'https://api.asaas.com/v3' // Utiliza Produção por padrão
 
     // 1. Create Customer if doesn't exist
     if (!customerId) {
@@ -103,10 +103,18 @@ serve(async (req) => {
         headers: { 'access_token': ASAAS_API_KEY! }
       })
       const qrData = await qrRes.json()
-      return new Response(JSON.stringify({ subscription: subData, pix: qrData, chargeId: firstCharge.id }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ 
+        subscription: subData, 
+        pix: qrData, 
+        chargeId: firstCharge.id,
+        invoiceUrl: subData.invoiceUrl 
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    return new Response(JSON.stringify({ subscription: subData }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ 
+      subscription: subData,
+      invoiceUrl: subData.invoiceUrl 
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
