@@ -260,6 +260,7 @@ export type Database = {
           cpf: string | null
           created_at: string
           email: string
+          full_name: string | null
           id: string
           role: Database["public"]["Enums"]["user_role"]
         }
@@ -268,6 +269,7 @@ export type Database = {
           cpf?: string | null
           created_at?: string
           email: string
+          full_name?: string | null
           id: string
           role?: Database["public"]["Enums"]["user_role"]
         }
@@ -276,6 +278,7 @@ export type Database = {
           cpf?: string | null
           created_at?: string
           email?: string
+          full_name?: string | null
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
         }

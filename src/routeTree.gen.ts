@@ -25,6 +25,7 @@ import { Route as AdminUsuariosRouteImport } from './routes/admin/usuarios'
 import { Route as AdminServidoresRouteImport } from './routes/admin/servidores'
 import { Route as AdminPlanosRouteImport } from './routes/admin/planos'
 import { Route as AdminOnboardingRouteImport } from './routes/admin/onboarding'
+import { Route as AdminIntegracoesRouteImport } from './routes/admin/integracoes'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
 
 const SuporteRoute = SuporteRouteImport.update({
@@ -107,6 +108,11 @@ const AdminOnboardingRoute = AdminOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
+  id: '/integracoes',
+  path: '/integracoes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/cliente': typeof ClienteRouteWithChildren
   '/suporte': typeof SuporteRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/onboarding': typeof AdminOnboardingRoute
   '/admin/planos': typeof AdminPlanosRoute
   '/admin/servidores': typeof AdminServidoresRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/cliente'
     | '/suporte'
     | '/admin/configuracoes'
+    | '/admin/integracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/cliente'
     | '/suporte'
     | '/admin/configuracoes'
+    | '/admin/integracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/cliente'
     | '/suporte'
     | '/admin/configuracoes'
+    | '/admin/integracoes'
     | '/admin/onboarding'
     | '/admin/planos'
     | '/admin/servidores'
@@ -353,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOnboardingRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/integracoes': {
+      id: '/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AdminIntegracoesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/configuracoes': {
       id: '/admin/configuracoes'
       path: '/configuracoes'
@@ -365,6 +384,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminOnboardingRoute: typeof AdminOnboardingRoute
   AdminPlanosRoute: typeof AdminPlanosRoute
   AdminServidoresRoute: typeof AdminServidoresRoute
@@ -374,6 +394,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminOnboardingRoute: AdminOnboardingRoute,
   AdminPlanosRoute: AdminPlanosRoute,
   AdminServidoresRoute: AdminServidoresRoute,

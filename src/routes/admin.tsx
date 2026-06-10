@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, redirect } from '@tanstack/react-router'
-import { Server, Settings, MonitorPlay, Wallet, Users } from 'lucide-react'
+import { Server, Settings, MonitorPlay, Wallet, Users, Plug } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 
 export const Route = createFileRoute('/admin')({
@@ -38,6 +38,10 @@ function AdminLayout() {
           <Link to="/admin/usuarios" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold">
             <Users className="w-5 h-5" />
             Gestão de Usuários
+          </Link>
+          <Link to="/admin/integracoes" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors [&.active]:bg-white/20 [&.active]:font-semibold">
+            <Plug className="w-5 h-5" />
+            Integrações
           </Link>
         </nav>
         
