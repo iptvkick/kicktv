@@ -8,7 +8,8 @@ export const Route = createFileRoute('/admin/integracoes')({
 })
 
 function IntegracoesView() {
-  const [testing, setTesting] = useState(false)
+  const [testingPing, setTestingPing] = useState(false)
+  const [testingWebhook, setTestingWebhook] = useState(false)
   const [testResult, setTestResult] = useState<{ status: 'idle' | 'success' | 'error', message?: string }>({ status: 'idle' })
 
   const [asaasApiKey, setAsaasApiKey] = useState('')
@@ -62,7 +63,7 @@ function IntegracoesView() {
   }
 
   const handleTestConnection = async () => {
-    setTesting(true)
+    setTestingPing(true)
     setTestResult({ status: 'idle' })
     try {
       const { data, error } = await supabase.functions.invoke('asaas-ping-test')
@@ -79,7 +80,31 @@ function IntegracoesView() {
     } catch (err: any) {
       setTestResult({ status: 'error', message: err.message || 'Falha na comunicação com a Edge Function.' })
     } finally {
-      setTesting(false)
+      setTestingPing(false)
+    }
+  }
+
+  const handleSimulateWebhook = async () => {
+    setTestingWebhook(true)
+    setTestResult({ status: 'idle' })
+    try {
+      const { data, error } = await supabase.functions.invoke('asaas-webhook', { 
+        body: { event: 'PAYMENT_CONFIRMED' } 
+      })
+      
+      if (error) {
+        throw new Error(error.message)
+      }
+      
+      if (data?.error) {
+        throw new Error(data.error)
+      }
+      
+      setTestResult({ status: 'success', message: 'Sucesso de Recebimento! Webhook processado.' })
+    } catch (err: any) {
+      setTestResult({ status: 'error', message: err.message || 'Erro de Autenticação / Falha no Webhook.' })
+    } finally {
+      setTestingWebhook(false)
     }
   }
 
@@ -217,7 +242,7 @@ function IntegracoesView() {
                <div className="flex flex-col items-center">
                  <AlertCircle className="w-12 h-12 text-zinc-300 mb-4" />
                  <p className="text-sm text-zinc-500 max-w-xs">
-                   Clique no botão abaixo para testar a comunicação entre o seu projeto e o Asaas usando a chave atual.
+                   Clique nos botões abaixo para testar a conexão com o Asaas ou simular o recebimento de um Webhook.
                  </p>
                </div>
             )}
@@ -238,7 +263,7 @@ function IntegracoesView() {
                <div className="flex flex-col items-center animate-in zoom-in-95 duration-300">
                  <XCircle className="w-12 h-12 text-rose-500 mb-4" />
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 mb-2">
-                   Erro de Autenticação
+                   Erro / Falha
                  </span>
                  <p className="text-sm text-zinc-600 max-w-xs">
                    {testResult.message}
@@ -248,23 +273,43 @@ function IntegracoesView() {
 
           </div>
 
-          <button 
-            onClick={handleTestConnection}
-            disabled={testing}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl font-medium transition-all active:scale-[0.98]"
-          >
-            {testing ? (
-              <>
-                <RefreshCw className="w-5 h-5 animate-spin" />
-                Testando Comunicação...
-              </>
-            ) : (
-              <>
-                <Play className="w-5 h-5" />
-                Testar Conexão Asaas
-              </>
-            )}
-          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button 
+              onClick={handleTestConnection}
+              disabled={testingPing || testingWebhook}
+              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl font-medium transition-all active:scale-[0.98]"
+            >
+              {testingPing ? (
+                <>
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  Testando...
+                </>
+              ) : (
+                <>
+                  <Play className="w-5 h-5" />
+                  Testar Conexão
+                </>
+              )}
+            </button>
+            
+            <button 
+              onClick={handleSimulateWebhook}
+              disabled={testingPing || testingWebhook}
+              className="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl font-medium transition-all active:scale-[0.98]"
+            >
+              {testingWebhook ? (
+                <>
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  Simulando...
+                </>
+              ) : (
+                <>
+                  <Webhook className="w-5 h-5" />
+                  Simular Webhook
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
       </div>
