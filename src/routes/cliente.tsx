@@ -33,8 +33,8 @@ function ClienteLayout() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-background overflow-x-hidden">
-      <main className="w-full max-w-md min-h-screen bg-background relative border-x border-border pb-24 flex flex-col overflow-x-hidden">
+    <div className="flex flex-col items-center min-h-screen bg-background">
+      <main className="w-full max-w-md min-h-screen bg-background relative border-x border-border pb-24 flex flex-col">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -43,6 +43,7 @@ function ClienteLayout() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
             className="flex-1 flex flex-col w-full"
+            style={{ touchAction: "pan-y" }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
