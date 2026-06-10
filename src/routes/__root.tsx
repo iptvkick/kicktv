@@ -20,9 +20,8 @@ export const Route = createRootRoute({
       {
         title: "KickTV SaaS",
       },
-      { title: "Lovable App" },
-      { property: "og:title", content: "Lovable App" },
-      { name: "twitter:title", content: "Lovable App" },
+      { property: "og:title", content: "KickTV SaaS" },
+      { name: "twitter:title", content: "KickTV SaaS" },
       { name: "description", content: "KickTV is a SaaS application for generating and managing single-page websites." },
       { property: "og:description", content: "KickTV is a SaaS application for generating and managing single-page websites." },
       { name: "twitter:description", content: "KickTV is a SaaS application for generating and managing single-page websites." },
