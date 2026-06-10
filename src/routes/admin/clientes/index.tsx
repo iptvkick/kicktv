@@ -19,34 +19,63 @@ function ClientesAdminPage() {
   async function fetchClientes() {
     setLoading(true)
     try {
+      // Query 1: busca todos os profiles (sem join)
       const { data: profiles, error: profError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false })
-      
+
       if (profError) throw profError
 
-      const userIds = profiles?.map(p => p.id) || []
-      
+      const userIds = (profiles ?? []).map((p: any) => p.id)
+
+      // Query 2: busca subscriptions sem join (independente de FK no PostgREST)
       let subscriptionsMap: Record<string, any> = {}
+      let planIds: string[] = []
+
       if (userIds.length > 0) {
         const { data: subs, error: subsError } = await supabase
           .from('subscriptions')
-          .select('*, plans(name)')
+          .select('user_id, status, next_due_date, plan_id, extra_users_count')
           .in('user_id', userIds)
-        
-        if (subsError) throw subsError
-        
-        subs?.forEach(sub => {
-          // just taking the most recently created or updated if there are multiple, but normally 1 per user
-          subscriptionsMap[sub.user_id] = sub
-        })
+
+        if (subsError) {
+          console.warn('Aviso: falha ao buscar subscriptions:', subsError.message)
+        } else {
+          ;(subs ?? []).forEach((sub: any) => {
+            subscriptionsMap[sub.user_id] = sub
+            if (sub.plan_id) planIds.push(sub.plan_id)
+          })
+        }
       }
 
-      const merged = profiles?.map(p => ({
-        ...p,
-        subscription: subscriptionsMap[p.id] || null
-      })) || []
+      // Query 3: busca plans sem join (independente de FK no PostgREST)
+      let plansMap: Record<string, any> = {}
+      const uniquePlanIds = [...new Set(planIds)]
+      if (uniquePlanIds.length > 0) {
+        const { data: plans, error: plansError } = await supabase
+          .from('plans')
+          .select('id, name')
+          .in('id', uniquePlanIds)
+
+        if (plansError) {
+          console.warn('Aviso: falha ao buscar plans:', plansError.message)
+        } else {
+          ;(plans ?? []).forEach((plan: any) => {
+            plansMap[plan.id] = plan
+          })
+        }
+      }
+
+      // Merge client-side usando userId e planId como chaves
+      const merged = (profiles ?? []).map((p: any) => {
+        const sub = subscriptionsMap[p.id] || null
+        const plan = sub?.plan_id ? plansMap[sub.plan_id] || null : null
+        return {
+          ...p,
+          subscription: sub ? { ...sub, plans: plan } : null,
+        }
+      })
 
       setClientes(merged)
     } catch (err) {
