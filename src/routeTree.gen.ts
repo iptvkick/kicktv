@@ -19,6 +19,7 @@ import { Route as ClienteSuporteRouteImport } from './routes/cliente/suporte'
 import { Route as ClientePlayerRouteImport } from './routes/cliente/player'
 import { Route as ClientePerfilRouteImport } from './routes/cliente/perfil'
 import { Route as ClienteDashboardRouteImport } from './routes/cliente/dashboard'
+import { Route as ClienteAssinaturaRouteImport } from './routes/cliente/assinatura'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsuariosRouteImport } from './routes/admin/usuarios'
@@ -78,6 +79,11 @@ const ClientePerfilRoute = ClientePerfilRouteImport.update({
 const ClienteDashboardRoute = ClienteDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => ClienteRoute,
+} as any)
+const ClienteAssinaturaRoute = ClienteAssinaturaRouteImport.update({
+  id: '/assinatura',
+  path: '/assinatura',
   getParentRoute: () => ClienteRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/cliente/assinatura': typeof ClienteAssinaturaRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/cliente/assinatura': typeof ClienteAssinaturaRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/cliente/assinatura': typeof ClienteAssinaturaRoute
   '/cliente/dashboard': typeof ClienteDashboardRoute
   '/cliente/perfil': typeof ClientePerfilRoute
   '/cliente/player': typeof ClientePlayerRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
+    | '/cliente/assinatura'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
+    | '/cliente/assinatura'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/auth/login'
     | '/auth/register'
+    | '/cliente/assinatura'
     | '/cliente/dashboard'
     | '/cliente/perfil'
     | '/cliente/player'
@@ -345,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/cliente/dashboard'
       preLoaderRoute: typeof ClienteDashboardRouteImport
+      parentRoute: typeof ClienteRoute
+    }
+    '/cliente/assinatura': {
+      id: '/cliente/assinatura'
+      path: '/assinatura'
+      fullPath: '/cliente/assinatura'
+      preLoaderRoute: typeof ClienteAssinaturaRouteImport
       parentRoute: typeof ClienteRoute
     }
     '/auth/register': {
@@ -447,6 +466,7 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ClienteRouteChildren {
+  ClienteAssinaturaRoute: typeof ClienteAssinaturaRoute
   ClienteDashboardRoute: typeof ClienteDashboardRoute
   ClientePerfilRoute: typeof ClientePerfilRoute
   ClientePlayerRoute: typeof ClientePlayerRoute
@@ -454,6 +474,7 @@ interface ClienteRouteChildren {
 }
 
 const ClienteRouteChildren: ClienteRouteChildren = {
+  ClienteAssinaturaRoute: ClienteAssinaturaRoute,
   ClienteDashboardRoute: ClienteDashboardRoute,
   ClientePerfilRoute: ClientePerfilRoute,
   ClientePlayerRoute: ClientePlayerRoute,

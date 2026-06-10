@@ -10,12 +10,13 @@ import {
   ListTree,
   Server,
   Smartphone,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const clientNavItems = [
   { label: "Início", icon: Home, href: "/cliente/dashboard" },
-  { label: "Player", icon: MonitorPlay, href: "/cliente/player" },
+  { label: "Planos", icon: CreditCard, href: "/cliente/assinatura" },
   { label: "Suporte", icon: Headset, href: "/cliente/suporte" },
   { label: "Perfil", icon: User, href: "/cliente/perfil" },
 ];

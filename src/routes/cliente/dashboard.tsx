@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { Bell, Settings2, X, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,7 +43,7 @@ function DashboardPage() {
         const { data: subData } = await supabase
           .from("subscriptions")
           .select("*, plans(*)")
-          .eq("profile_id", user.id)
+          .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -125,7 +125,7 @@ function DashboardPage() {
       <header className="pb-6 flex justify-between items-center">
         <div className="flex flex-col">
           <span className="text-sm text-foreground/60 font-medium uppercase tracking-wider">Bem-vindo de volta</span>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Olá, {profile?.email?.split('@')[0] || 'Cliente'}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Olá, {profile?.full_name?.split(' ')[0] || profile?.email?.split('@')[0] || 'Cliente'}</h1>
         </div>
         <button 
           onClick={() => setIsNotificationsOpen(true)}
@@ -134,6 +134,62 @@ function DashboardPage() {
           <Bell className="w-5 h-5" />
         </button>
       </header>
+
+      {/* Subscription Status Banners */}
+      {(() => {
+        const status = subscription?.status
+        const expiresAt = subscription?.expires_at
+        const expireDate = expiresAt ? new Date(expiresAt).toLocaleDateString('pt-BR') : null
+
+        if (status === 'trialing' || status === 'PENDING') {
+          return (
+            <Link
+              to="/cliente/assinatura"
+              className="flex items-center justify-between gap-3 mb-4 p-4 rounded-[20px] border transition-all"
+              style={{
+                background: 'linear-gradient(135deg, rgba(251,191,36,0.12) 0%, rgba(245,158,11,0.08) 100%)',
+                borderColor: 'rgba(251,191,36,0.35)',
+                boxShadow: '0 2px 12px rgba(251,191,36,0.12)'
+              }}
+            >
+              <div className="flex flex-col gap-0.5">
+                <span className="font-bold text-amber-700 text-sm">✨ Seu trial está ativo</span>
+                {expireDate && (
+                  <span className="text-xs text-amber-600/80">Expira em {expireDate}</span>
+                )}
+              </div>
+              <span className="shrink-0 text-xs font-bold px-4 py-2 rounded-full text-white"
+                style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)' }}>
+                Ativar Plano Completo →
+              </span>
+            </Link>
+          )
+        }
+
+        if (status === 'OVERDUE' || status === 'CANCELED' || status === 'canceled') {
+          return (
+            <Link
+              to="/cliente/assinatura"
+              className="flex items-center justify-between gap-3 mb-4 p-4 rounded-[20px] border transition-all"
+              style={{
+                background: 'linear-gradient(135deg, rgba(239,68,68,0.10) 0%, rgba(220,38,38,0.06) 100%)',
+                borderColor: 'rgba(239,68,68,0.30)',
+                boxShadow: '0 2px 12px rgba(239,68,68,0.10)'
+              }}
+            >
+              <div className="flex flex-col gap-0.5">
+                <span className="font-bold text-red-700 text-sm">⚠️ Assinatura vencida</span>
+                <span className="text-xs text-red-600/70">Renove para voltar a assistir</span>
+              </div>
+              <span className="shrink-0 text-xs font-bold px-4 py-2 rounded-full text-white bg-red-600">
+                Renovar Agora →
+              </span>
+            </Link>
+          )
+        }
+
+        return null
+      })()}
 
       <div className="flex-1 overflow-x-hidden w-full">
         <div className="relative w-full aspect-[4/5] bg-card rounded-[24px] overflow-hidden shadow-xl p-6 flex flex-col justify-end text-foreground border border-border">
@@ -220,8 +276,18 @@ function DashboardPage() {
                 )}
               </div>
             ) : (
-              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-[24px]">
-                <p className="text-sm text-red-600 font-semibold">Sua assinatura expirou. Renove agora para continuar assistindo.</p>
+              <div className="mt-6 flex flex-col gap-4">
+                <div className="p-5 bg-red-50 border border-red-200 rounded-[24px] flex flex-col items-center text-center">
+                  <p className="text-sm text-red-600 font-bold mb-4">
+                    Você está sem plano ativo. Assine agora para liberar seu acesso imediatamente.
+                  </p>
+                  <Link
+                    to="/cliente/assinatura"
+                    className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-bold text-base hover:opacity-90 transition-opacity shadow-sm"
+                  >
+                    Ver Planos e Assinar
+                  </Link>
+                </div>
               </div>
             )}
           </div>

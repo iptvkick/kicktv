@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026-06-10]
+- **[022-checkout-ux-and-admin]**, **[023-ui-hotfix]**, **[024-ui-standardization]** Specs finalizadas e arquivadas.
+  - Implementação do Countdown de 10 minutos para pagamento PIX.
+  - Configuração do Supabase Realtime Listener (`invoices` e `subscriptions`) para liberar o acesso instantaneamente após o pagamento.
+  - Criação de ambiente Sandbox com Edge Function simuladora de Webhook.
+  - Reestruturação do Painel Administrativo com visão "Raio-X" completa do cliente (histórico de faturas, assinaturas e edição).
+  - Padronização visual da arquitetura de UI: Cabeçalhos coesos entre Telas Principais (Perfil, Suporte, Assinatura) seguindo Vibe clean com ícones em container arredondado, mantendo a sobriedade.
+
 ## [2026-06-09]
 - **[003-ui-redesign-instrument-sans]** Spec finalizada e arquivada (Redesign Clean Banking/Travel).
   - Remoção total do estilo "Liquid Glass", animações excessivas e elementos "AI-look".

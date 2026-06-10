@@ -53,6 +53,7 @@ function OnboardingFlow() {
   const [showTrialModal, setShowTrialModal] = useState(false)
   const [credentials, setCredentials] = useState<{url: string, user: string, pass: string} | null>(null)
   const [copied, setCopied] = useState<'url' | 'user' | 'pass' | null>(null)
+  const [collectedName, setCollectedName] = useState('')
 
   const handleNextStep = () => {
     if (currentStep < MOCK_STEPS.length - 1) {
@@ -64,14 +65,34 @@ function OnboardingFlow() {
 
   const generateTrial = async () => {
     setGeneratingTrial(true)
-    await new Promise(r => setTimeout(r, 1500))
-    setCredentials({
-      url: 'http://painel.kicktv.com:80',
-      user: 'kick_' + Math.random().toString(36).substring(2, 6),
-      pass: Math.random().toString(36).substring(2, 8)
-    })
-    setGeneratingTrial(false)
-    setShowTrialModal(true)
+    try {
+      // Upsert full_name in profiles if collected
+      if (collectedName.trim()) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          await supabase.from('profiles').upsert(
+            { id: user.id, full_name: collectedName.trim() },
+            { onConflict: 'id' }
+          )
+        }
+      }
+
+      // Call real Edge Function
+      const { data, error } = await supabase.functions.invoke('generate-trial')
+      if (error) throw error
+
+      setCredentials({
+        url: data?.url || data?.server_url || '',
+        user: data?.username || data?.user || '',
+        pass: data?.password || data?.pass || '',
+      })
+      setShowTrialModal(true)
+    } catch (err: any) {
+      console.error('Erro ao gerar trial:', err)
+      alert('Não foi possível gerar seu acesso trial. Tente novamente.')
+    } finally {
+      setGeneratingTrial(false)
+    }
   }
 
   const copyToClipboard = (text: string, type: 'url' | 'user' | 'pass') => {
@@ -151,17 +172,31 @@ function OnboardingFlow() {
             </p>
 
             {currentStep === MOCK_STEPS.length - 1 ? (
-              <button
-                onClick={handleNextStep}
-                disabled={generatingTrial}
-                className="w-full h-16 rounded-2xl bg-primary hover:opacity-90 text-primary-foreground font-bold text-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-              >
-                {generatingTrial ? (
-                  <><Loader2 className="w-6 h-6 animate-spin" /> Gerando seu acesso...</>
-                ) : (
-                  <><Play className="w-6 h-6 fill-current" /> Instalei, Gerar Teste</>
-                )}
-              </button>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-foreground/50 ml-1">
+                    Seu Nome (opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={collectedName}
+                    onChange={(e) => setCollectedName(e.target.value)}
+                    placeholder="Como podemos te chamar?"
+                    className="bg-background text-foreground px-4 py-3 rounded-2xl border border-border focus:outline-none focus:border-primary font-medium transition-colors"
+                  />
+                </div>
+                <button
+                  onClick={handleNextStep}
+                  disabled={generatingTrial}
+                  className="w-full h-16 rounded-2xl bg-primary hover:opacity-90 text-primary-foreground font-bold text-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {generatingTrial ? (
+                    <><Loader2 className="w-6 h-6 animate-spin" /> Gerando seu acesso...</>
+                  ) : (
+                    <><Play className="w-6 h-6 fill-current" /> Instalei, Gerar Teste</>
+                  )}
+                </button>
+              </div>
             ) : (
               <button
                 onClick={handleNextStep}

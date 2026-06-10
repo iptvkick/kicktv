@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/integrations/supabase/client'
 import { Tv, Smartphone, Monitor, Cast, CheckCircle2, Home, HelpCircle, LogIn } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
@@ -16,6 +18,19 @@ const DEVICES = [
 
 function LandingPage() {
   const navigate = useNavigate()
+  const [plans, setPlans] = useState<any[]>([])
+  const [plansLoading, setPlansLoading] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('plans')
+      .select('*')
+      .eq('is_active', true)
+      .then(({ data }) => {
+        setPlans(data || [])
+        setPlansLoading(false)
+      })
+  }, [])
 
   const handleDeviceClick = (deviceId: string) => {
     navigate({ to: '/auth/register', search: { device: deviceId } })
@@ -101,81 +116,96 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing Preview */}
+        {/* Pricing — Dynamic from Supabase */}
         <section id="planos" className="space-y-12 pt-12">
           <div className="text-center">
             <h2 className="text-4xl font-bold tracking-tight">Planos simples e diretos.</h2>
             <p className="text-foreground/60 mt-3 text-lg">Sem taxas escondidas. Cancele quando quiser.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Plano Essencial */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-card p-8 rounded-[32px] border border-black/5 shadow-sm relative overflow-hidden"
-            >
-              <h3 className="text-2xl font-bold">Essencial</h3>
-              <div className="mt-4 mb-8 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold tracking-tight">R$ 35</span>
-                <span className="text-foreground/50">/mês</span>
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                {[
-                  'Acesso completo a canais, filmes e séries',
-                  '1 Tela inclusa',
+          {plansLoading ? (
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {[0, 1].map(i => (
+                <div key={i} className="bg-card p-8 rounded-[32px] border border-black/5 animate-pulse">
+                  <div className="h-6 w-32 bg-border rounded-md mb-4" />
+                  <div className="h-10 w-20 bg-border rounded-md mb-8" />
+                  <div className="space-y-3 mb-8">
+                    {[0,1,2,3].map(j => <div key={j} className="h-4 bg-border rounded-md" />)}
+                  </div>
+                  <div className="h-14 bg-border rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {plans.map((plan, i) => {
+                const isPrimary = i === 1 || (plans.length === 1)
+                const price = plan.base_price ?? plan.price_monthly ?? 0
+                const features: string[] = [
+                  plan.description || 'Acesso completo a canais, filmes e séries',
+                  `${plan.max_connections || 1} Tela${(plan.max_connections || 1) > 1 ? 's' : ''} inclusa${(plan.max_connections || 1) > 1 ? 's' : ''}`,
                   'Tecnologia híbrida Anti-Travamento',
-                  'Suporte 24/7'
-                ].map(feature => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-accent" />
-                    <span className="font-medium text-foreground/80">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                  'Suporte 24/7',
+                ]
+                return (
+                  <motion.div
+                    key={plan.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className={isPrimary
+                      ? 'bg-accent text-white p-8 rounded-[32px] shadow-2xl relative overflow-hidden'
+                      : 'bg-card p-8 rounded-[32px] border border-black/5 shadow-sm relative overflow-hidden'
+                    }
+                  >
+                    {isPrimary && plans.length > 1 && (
+                      <div className="absolute top-0 right-8 bg-white text-accent px-4 py-1 rounded-b-xl text-sm font-bold shadow-sm">
+                        Mais Popular
+                      </div>
+                    )}
+                    <h3 className={`text-2xl font-bold ${isPrimary ? 'text-accent-foreground' : ''}`}>
+                      {plan.name}
+                    </h3>
+                    <div className="mt-4 mb-8 flex items-baseline gap-1">
+                      <span className={`text-4xl font-extrabold tracking-tight ${isPrimary ? 'text-accent-foreground' : ''}`}>
+                        R$ {Number(price).toFixed(0)}
+                      </span>
+                      <span className={isPrimary ? 'text-accent-foreground/70' : 'text-foreground/50'}>/mês</span>
+                    </div>
 
-              <Link to="/auth/register" className="w-full bg-primary text-primary-foreground h-14 rounded-full flex items-center justify-center font-bold text-lg hover:opacity-90 transition-colors">
-                Começar Teste
-              </Link>
-            </motion.div>
+                    <ul className="space-y-4 mb-8">
+                      {features.map(feature => (
+                        <li key={feature} className="flex items-center gap-3">
+                          <CheckCircle2 className={`w-5 h-5 ${isPrimary ? 'text-accent-foreground' : 'text-accent'}`} />
+                          <span className={`font-medium ${isPrimary ? 'text-accent-foreground/90' : 'text-foreground/80'}`}>
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
 
-            {/* Plano Premium */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-accent text-white p-8 rounded-[32px] shadow-2xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-8 bg-white text-accent px-4 py-1 rounded-b-xl text-sm font-bold shadow-sm">
-                Mais Popular
-              </div>
-              <h3 className="text-2xl font-bold text-accent-foreground">Premium 4K</h3>
-              <div className="mt-4 mb-8 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold tracking-tight text-accent-foreground">R$ 45</span>
-                <span className="text-accent-foreground/70">/mês</span>
-              </div>
+                    <Link
+                      to="/auth/register"
+                      className={isPrimary
+                        ? 'w-full bg-card text-foreground h-14 rounded-full flex items-center justify-center font-bold text-lg hover:bg-card/90 transition-colors'
+                        : 'w-full bg-primary text-primary-foreground h-14 rounded-full flex items-center justify-center font-bold text-lg hover:opacity-90 transition-colors'
+                      }
+                    >
+                      Começar Trial
+                    </Link>
+                  </motion.div>
+                )
+              })}
 
-              <ul className="space-y-4 mb-8">
-                {[
-                  'Tudo do Essencial',
-                  'Catálogo Nexus On-Demand',
-                  'Interface Ultra Fluida',
-                  'Conteúdo +18 Opcional'
-                ].map(feature => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-accent-foreground" />
-                    <span className="font-medium text-accent-foreground/90">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link to="/auth/register" className="w-full bg-card text-foreground h-14 rounded-full flex items-center justify-center font-bold text-lg hover:bg-card/90 transition-colors">
-                Começar Teste
-              </Link>
-            </motion.div>
-          </div>
+              {/* Fallback if no plans returned */}
+              {plans.length === 0 && !plansLoading && (
+                <div className="col-span-2 text-center text-foreground/50 py-12">
+                  Planos em breve. <Link to="/auth/register" className="text-primary font-bold hover:underline">Cadastre-se</Link> para ser notificado.
+                </div>
+              )}
+            </div>
+          )}
         </section>
       </main>
       

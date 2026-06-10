@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Users, Search, MoreVertical, ShieldCheck, Clock, CheckCircle2, XCircle, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
@@ -8,6 +8,7 @@ export const Route = createFileRoute('/admin/clientes/')({
 })
 
 function ClientesAdminPage() {
+  const navigate = useNavigate()
   const [clientes, setClientes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -157,7 +158,11 @@ function ClientesAdminPage() {
                 </tr>
               ) : (
                 filteredClientes.map((cliente) => (
-                  <tr key={cliente.id} className="group hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors interactive">
+                  <tr 
+                    key={cliente.id} 
+                    className="group hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors interactive cursor-pointer"
+                    onClick={() => { navigate({ to: `/admin/clientes/${cliente.id}` }) }}
+                  >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-[16px] flex items-center justify-center font-bold text-lg shadow-sm">

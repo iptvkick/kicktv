@@ -9,7 +9,7 @@ export function FloatingNav() {
     { to: "/cliente/dashboard", icon: Home, label: "Início" },
     { to: "/cliente/player", icon: PlaySquare, label: "Player" },
     { to: "/cliente/suporte", icon: HeadphonesIcon, label: "Suporte" },
-    { to: "/cliente/perfil", icon: User, label: "Perfil" },
+    { to: "/cliente/assinatura", icon: User, label: "Assinatura" },
   ];
 
   return (

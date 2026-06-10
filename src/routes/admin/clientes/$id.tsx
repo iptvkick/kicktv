@@ -1,281 +1,204 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { User, ShieldCheck, Mail, CreditCard, MonitorSmartphone, Receipt, Calendar, ArrowLeft, XCircle, Settings2, AlertTriangle, ExternalLink } from 'lucide-react'
+import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
+import { ArrowLeft, User, CreditCard, Clock, FileText, CheckCircle2, XCircle, Zap } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export const Route = createFileRoute('/admin/clientes/$id')({
-  component: ClienteProfilePage,
+  component: ClienteXRayPage,
 })
 
-function ClienteProfilePage() {
+function ClienteXRayPage() {
   const { id } = Route.useParams()
+  const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
   const [subscription, setSubscription] = useState<any>(null)
   const [invoices, setInvoices] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  const [isChangingScreens, setIsChangingScreens] = useState(false)
-  const [newExtraScreens, setNewExtraScreens] = useState(0)
 
   useEffect(() => {
-    fetchData()
+    fetchXRay()
   }, [id])
 
-  async function fetchData() {
+  async function fetchXRay() {
     setLoading(true)
     try {
-      const { data: pData, error: pErr } = await supabase.from('profiles').select('*').eq('id', id).single()
-      if (pErr) throw pErr
-      setProfile(pData)
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', id).single()
+      setProfile(prof)
 
-      const { data: sData, error: sErr } = await supabase
-        .from('subscriptions')
-        .select('*, plans(*)')
-        .eq('user_id', id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-      
-      if (!sErr && sData) {
-        setSubscription(sData)
-        setNewExtraScreens(sData.extra_users_count || 0)
-        
-        const { data: invData, error: invErr } = await supabase
-          .from('invoices')
-          .select('*')
-          .eq('subscription_id', sData.id)
-          .order('due_date', { ascending: false })
-        
-        if (!invErr && invData) {
-          setInvoices(invData)
-        }
-      }
+      const { data: sub } = await supabase.from('subscriptions').select('*, plans(*)').eq('user_id', id).maybeSingle()
+      setSubscription(sub)
+
+      const { data: inv } = await supabase.from('invoices').select('*').eq('user_id', id).order('created_at', { ascending: false })
+      setInvoices(inv || [])
     } catch (err) {
-      console.error('Erro ao buscar dados do cliente:', err)
+      console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleUpdateScreens = async () => {
-    if (!subscription) return
-    setIsChangingScreens(true)
-    try {
-      // call the Edge Function for updating subscription screens
-      const { data, error } = await supabase.functions.invoke('asaas-subscription-manager', {
-        body: { 
-          action: 'update_screens', 
-          subscription_id: subscription.id, 
-          extra_screens: newExtraScreens 
-        }
-      })
-      if (error) throw error
-      
-      alert('Telas atualizadas com sucesso! A cobrança foi ajustada no Asaas.')
-      fetchData() // refresh
-    } catch (err) {
-      console.error('Erro ao atualizar telas:', err)
-      alert('Erro ao atualizar telas.')
-    } finally {
-      setIsChangingScreens(false)
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'ACTIVE': return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
+      case 'RECEIVED': return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'
+      case 'PENDING': return 'text-amber-500 bg-amber-500/10 border-amber-500/20'
+      case 'OVERDUE': return 'text-red-500 bg-red-500/10 border-red-500/20'
+      default: return 'text-zinc-500 bg-zinc-500/10 border-zinc-500/20'
     }
-  }
-
-  const handleCancelSubscription = async () => {
-    if (!subscription) return
-    if (!confirm('ATENÇÃO: Deseja realmente cancelar a assinatura deste cliente? Esta ação não pode ser desfeita e cancelará as cobranças no Asaas.')) return
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('asaas-subscription-manager', {
-        body: { 
-          action: 'cancel_subscription', 
-          subscription_id: subscription.id 
-        }
-      })
-      if (error) throw error
-      
-      alert('Assinatura cancelada com sucesso.')
-      fetchData()
-    } catch (err) {
-      console.error('Erro ao cancelar assinatura:', err)
-      alert('Erro ao cancelar assinatura.')
-    }
-  }
-
-  const getInvoiceStatusBadge = (status: string) => {
-    const map: Record<string, { label: string, classes: string }> = {
-      'PENDING': { label: 'Pendente', classes: 'bg-yellow-100 text-yellow-800' },
-      'RECEIVED': { label: 'Pago', classes: 'bg-emerald-100 text-emerald-800' },
-      'CONFIRMED': { label: 'Confirmado', classes: 'bg-emerald-100 text-emerald-800' },
-      'OVERDUE': { label: 'Atrasado', classes: 'bg-red-100 text-red-800' },
-      'REFUNDED': { label: 'Reembolsado', classes: 'bg-purple-100 text-purple-800' },
-    }
-    const config = map[status] || { label: status, classes: 'bg-zinc-100 text-zinc-800' }
-    return <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${config.classes}`}>{config.label}</span>
   }
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4 animate-in fade-in">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        <span className="text-zinc-500 font-bold">Carregando Perfil do Cliente...</span>
+      <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
 
   if (!profile) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4 animate-in fade-in">
-        <h2 className="text-2xl font-bold">Cliente não encontrado</h2>
-        <Link to="/admin/clientes" className="text-indigo-500 hover:underline">Voltar para a lista</Link>
-      </div>
-    )
+    return <div className="p-8 text-center text-zinc-500">Cliente não encontrado.</div>
   }
 
   return (
-    <div className="flex flex-col gap-8 p-4 md:p-8 animate-in fade-in duration-500 max-w-7xl mx-auto w-full">
-      <header className="flex flex-col gap-4">
-        <Link to="/admin/clientes" className="inline-flex items-center gap-2 text-zinc-500 hover:text-indigo-600 font-semibold transition-colors w-fit">
-          <ArrowLeft className="w-4 h-4" /> Voltar para Hub de Clientes
+    <div className="flex flex-col gap-8 p-4 md:p-8 animate-in fade-in duration-500 max-w-7xl mx-auto w-full selection:bg-indigo-500/30">
+      
+      {/* Header */}
+      <header className="flex items-center gap-4 border-b border-white/10 pb-6">
+        <Link to="/admin/clientes" className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-colors border border-white/5">
+          <ArrowLeft className="w-6 h-6 text-foreground" />
         </Link>
-        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-[24px] flex items-center justify-center font-black text-4xl shadow-xl shadow-indigo-500/20">
-              {profile.full_name ? profile.full_name.charAt(0).toUpperCase() : <User className="w-10 h-10"/>}
-            </div>
-            <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-foreground">{profile.full_name || 'Sem Nome'}</h1>
-              <div className="flex items-center gap-4 mt-2 text-zinc-500 font-medium">
-                <span className="flex items-center gap-1.5"><Mail className="w-4 h-4"/> {profile.email}</span>
-                <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4"/> {profile.cpf || 'Sem CPF'}</span>
-              </div>
-            </div>
-          </div>
-          {profile.asaas_customer_id && (
-            <div className="bg-zinc-100 dark:bg-zinc-900 px-4 py-2 rounded-xl text-xs font-mono text-zinc-500 flex items-center gap-2">
-              Asaas ID: <span className="font-bold text-zinc-700 dark:text-zinc-300">{profile.asaas_customer_id}</span>
-            </div>
-          )}
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
+            Raio-X: {profile.full_name || 'Sem Nome'}
+          </h1>
+          <p className="text-zinc-500 font-mono text-sm mt-1">ID: {profile.id}</p>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
-        {/* Left Column: Subscription Overview */}
-        <div className="lg:col-span-1 flex flex-col gap-8">
-          <section className="bg-white/70 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-[32px] p-8 shadow-xl flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold flex items-center gap-2"><CreditCard className="w-6 h-6 text-indigo-500"/> Assinatura</h2>
-              {subscription?.status === 'ACTIVE' && (
-                <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Ativa</span>
-              )}
-              {subscription?.status === 'CANCELED' && (
-                <span className="bg-zinc-100 text-zinc-500 px-3 py-1 rounded-full text-xs font-bold uppercase">Cancelada</span>
-              )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Coluna 1: Perfil */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-xl flex flex-col gap-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center shadow-inner border border-indigo-500/30">
+              <User className="w-8 h-8" />
             </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Perfil</h2>
+              <p className="text-zinc-500 text-sm">Dados cadastrais</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">E-mail</p>
+              <p className="text-lg font-medium text-foreground bg-black/20 p-3 rounded-xl border border-white/5">{profile.email}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">CPF</p>
+              <p className="text-lg font-medium text-foreground bg-black/20 p-3 rounded-xl border border-white/5">{profile.cpf || 'Não informado'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Criado em</p>
+              <p className="text-lg font-medium text-foreground bg-black/20 p-3 rounded-xl border border-white/5 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-zinc-400" />
+                {new Date(profile.created_at).toLocaleString('pt-BR')}
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
-            {subscription ? (
-              <>
-                <div className="bg-zinc-50 dark:bg-zinc-950/50 p-6 rounded-[24px] border border-zinc-100 dark:border-white/5 flex flex-col gap-4">
-                  <div>
-                    <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Plano Base</div>
-                    <div className="text-xl font-bold">{subscription.plans?.name || 'Desconhecido'}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Próximo Vencimento</div>
-                    <div className="text-lg font-semibold flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-zinc-400" />
-                      {subscription.next_due_date ? new Date(subscription.next_due_date).toLocaleDateString('pt-BR') : 'N/A'}
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-zinc-200 dark:border-white/10">
-                    <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Valor Total (Mês)</div>
-                    <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">R$ {Number(subscription.total_price).toFixed(2)}</div>
-                  </div>
+        {/* Coluna 2: Assinatura */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-xl flex flex-col gap-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center shadow-inner border border-cyan-500/30">
+              <Zap className="w-8 h-8" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Assinatura</h2>
+              <p className="text-zinc-500 text-sm">Plano atual e status</p>
+            </div>
+          </div>
+
+          {subscription ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center bg-black/20 p-4 rounded-2xl border border-white/5">
+                <div>
+                  <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Status</p>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(subscription.status)}`}>
+                    {subscription.status}
+                  </span>
                 </div>
+              </div>
 
-                <div className="flex flex-col gap-4 mt-2">
-                  <div className="flex items-center justify-between p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                    <div className="flex items-center gap-3">
-                      <MonitorSmartphone className="w-5 h-5 text-zinc-500" />
-                      <div className="font-semibold">Telas Extras</div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button onClick={() => setNewExtraScreens(Math.max(0, newExtraScreens - 1))} className="w-8 h-8 rounded-full bg-white dark:bg-zinc-700 font-bold text-lg flex items-center justify-center shadow-sm">-</button>
-                      <span className="w-6 text-center font-black text-xl">{newExtraScreens}</span>
-                      <button onClick={() => setNewExtraScreens(newExtraScreens + 1)} className="w-8 h-8 rounded-full bg-white dark:bg-zinc-700 font-bold text-lg flex items-center justify-center shadow-sm">+</button>
-                    </div>
-                  </div>
-                  {newExtraScreens !== subscription.extra_users_count && (
-                    <button 
-                      onClick={handleUpdateScreens}
-                      disabled={isChangingScreens}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-[0_8px_16px_rgba(79,70,229,0.2)]"
-                    >
-                      {isChangingScreens ? 'Atualizando Asaas...' : 'Confirmar Nova Quantidade'}
-                    </button>
-                  )}
+              <div>
+                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Plano</p>
+                <p className="text-xl font-bold text-foreground">{subscription.plans?.name || 'N/A'}</p>
+              </div>
+
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Telas Extras</p>
+                  <p className="text-lg font-medium text-foreground">{subscription.extra_users_count}</p>
                 </div>
+                <div>
+                  <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Vencimento</p>
+                  <p className="text-lg font-medium text-foreground">
+                    {subscription.next_due_date ? new Date(subscription.next_due_date).toLocaleDateString('pt-BR') : 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-white/10 rounded-2xl">
+              <CreditCard className="w-10 h-10 text-zinc-500 mb-3" />
+              <p className="text-zinc-500 font-medium">Cliente não possui assinatura ativa.</p>
+            </div>
+          )}
+        </motion.div>
 
-                {subscription.status !== 'CANCELED' && (
-                  <button 
-                    onClick={handleCancelSubscription}
-                    className="mt-4 flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 p-3 rounded-xl font-semibold transition-colors"
-                  >
-                    <XCircle className="w-4 h-4" /> Cancelar Assinatura do Cliente
-                  </button>
-                )}
-              </>
+        {/* Coluna 3: Faturas */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-xl flex flex-col gap-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center shadow-inner border border-rose-500/30">
+              <FileText className="w-8 h-8" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Histórico</h2>
+              <p className="text-zinc-500 text-sm">Faturas geradas</p>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[300px] custom-scrollbar">
+            {invoices.length === 0 ? (
+              <div className="text-center text-zinc-500 p-6">Nenhuma fatura encontrada.</div>
             ) : (
-              <div className="text-zinc-500 italic py-10 text-center">Nenhuma assinatura vinculada.</div>
+              invoices.map((inv) => (
+                <div key={inv.id} className="bg-black/20 border border-white/5 p-4 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-colors">
+                  <div>
+                    <p className="font-bold text-foreground">R$ {Number(inv.amount).toFixed(2)}</p>
+                    <p className="text-xs text-zinc-500">
+                      {new Date(inv.created_at).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                  <span className={`px-2 py-1 rounded-md text-[10px] font-bold border uppercase ${getStatusColor(inv.status)}`}>
+                    {inv.status}
+                  </span>
+                </div>
+              ))
             )}
-          </section>
-        </div>
+          </div>
+        </motion.div>
 
-        {/* Right Column: Invoices */}
-        <div className="lg:col-span-2 flex flex-col gap-8">
-          <section className="bg-white/70 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-[32px] p-8 shadow-xl flex flex-col gap-6 h-full">
-            <h2 className="text-2xl font-bold flex items-center gap-2"><Receipt className="w-6 h-6 text-purple-500"/> Faturas & Pagamentos</h2>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-zinc-200 dark:border-white/10">
-                    <th className="pb-4 text-xs font-bold uppercase tracking-wider text-zinc-500">Vencimento</th>
-                    <th className="pb-4 text-xs font-bold uppercase tracking-wider text-zinc-500">Valor</th>
-                    <th className="pb-4 text-xs font-bold uppercase tracking-wider text-zinc-500">Status</th>
-                    <th className="pb-4 text-xs font-bold uppercase tracking-wider text-zinc-500">ID Pagamento</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-white/10">
-                  {invoices.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-10 text-center text-zinc-500 font-semibold">Nenhuma fatura encontrada.</td>
-                    </tr>
-                  ) : (
-                    invoices.map(invoice => (
-                      <tr key={invoice.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td className="py-4">
-                          <div className="font-semibold text-foreground">
-                            {new Date(invoice.due_date).toLocaleDateString('pt-BR')}
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <div className="font-bold">R$ {Number(invoice.amount).toFixed(2)}</div>
-                        </td>
-                        <td className="py-4">
-                          {getInvoiceStatusBadge(invoice.status)}
-                        </td>
-                        <td className="py-4 text-xs font-mono text-zinc-500">
-                          {invoice.asaas_payment_id || '-'}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
       </div>
     </div>
   )
