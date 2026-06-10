@@ -14,6 +14,7 @@ function IntegracoesView() {
 
   const [asaasApiKey, setAsaasApiKey] = useState('')
   const [asaasWebhookToken, setAsaasWebhookToken] = useState('')
+  const [asaasEnvironment, setAsaasEnvironment] = useState<'sandbox' | 'production'>('sandbox')
   const [saving, setSaving] = useState(false)
   const [isLoadingKeys, setIsLoadingKeys] = useState(true)
 
@@ -27,8 +28,10 @@ function IntegracoesView() {
           .maybeSingle()
         
         if (data) {
-          setAsaasApiKey(data.api_key || (data.credentials as any)?.apiKey || '')
-          setAsaasWebhookToken((data.credentials as any)?.webhookToken || '')
+          const creds = data.credentials as any;
+          setAsaasApiKey(data.api_key || creds?.apiKey || '')
+          setAsaasWebhookToken(creds?.webhookToken || '')
+          setAsaasEnvironment(creds?.environment || 'sandbox')
         }
       } catch (err) {
         console.error('Failed to load integrations:', err)
@@ -48,7 +51,7 @@ function IntegracoesView() {
           {
             provider: 'asaas',
             api_key: asaasApiKey,
-            credentials: { apiKey: asaasApiKey, webhookToken: asaasWebhookToken }
+            credentials: { apiKey: asaasApiKey, webhookToken: asaasWebhookToken, environment: asaasEnvironment }
           },
           { onConflict: 'provider' }
         )
@@ -135,6 +138,34 @@ function IntegracoesView() {
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">1</div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-zinc-400" />
+                  Ambiente Asaas
+                </h3>
+                <p className="text-sm text-zinc-600 mt-1">
+                  Selecione se deseja usar o ambiente de testes (Sandbox) ou Produção.
+                </p>
+                <div className="mt-3 flex gap-2 p-1 bg-zinc-50 rounded-xl border border-black/5 w-fit">
+                  <button 
+                    onClick={() => setAsaasEnvironment('sandbox')}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${asaasEnvironment === 'sandbox' ? 'bg-white text-zinc-900 shadow-sm border border-black/5' : 'text-zinc-500 hover:text-zinc-900'}`}
+                  >
+                    Ambiente de Testes
+                  </button>
+                  <button 
+                    onClick={() => setAsaasEnvironment('production')}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${asaasEnvironment === 'production' ? 'bg-zinc-900 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900'}`}
+                  >
+                    Produção
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">2</div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
                   <Key className="w-4 h-4 text-zinc-400" />
                   Access Token (API Key)
                 </h3>
@@ -153,9 +184,9 @@ function IntegracoesView() {
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 3 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">2</div>
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">3</div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
                   <Webhook className="w-4 h-4 text-zinc-400" />
@@ -179,9 +210,9 @@ function IntegracoesView() {
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 4 */}
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">3</div>
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-zinc-100 text-zinc-600 flex items-center justify-center font-bold text-sm">4</div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
                   <Shield className="w-4 h-4 text-zinc-400" />
