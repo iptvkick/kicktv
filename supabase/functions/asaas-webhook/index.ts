@@ -1,9 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, asaas-access-token',
+}
+
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return new Response('Method not allowed', { status: 405, headers: corsHeaders })
   }
 
   try {
@@ -11,7 +20,7 @@ serve(async (req) => {
 
     if (!asaaccessToken) {
       console.error('Missing asaas-access-token header')
-      return new Response('Unauthorized', { status: 401 })
+      return new Response('Unauthorized', { status: 401, headers: corsHeaders })
     }
 
     const supabaseAdmin = createClient(
@@ -28,28 +37,28 @@ serve(async (req) => {
 
     if (error || !integration) {
       console.error('Error fetching Asaas integration credentials:', error?.message)
-      return new Response('Unauthorized', { status: 401 })
+      return new Response('Unauthorized', { status: 401, headers: corsHeaders })
     }
 
     const webhookToken = integration.credentials?.webhookToken
 
     if (!webhookToken || asaaccessToken !== webhookToken) {
       console.error('Invalid Webhook Token')
-      return new Response('Unauthorized', { status: 401 })
+      return new Response('Unauthorized', { status: 401, headers: corsHeaders })
     }
 
     // Retornar 200 { success: true } conforme a Fase 2 da Spec 016
     // (a lógica de negócio do webhook será inserida no futuro)
     return new Response(JSON.stringify({ success: true }), { 
       status: 200, 
-      headers: { 'Content-Type': 'application/json' } 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
 
   } catch (error: any) {
     console.error('Webhook Error:', error.message)
     return new Response(JSON.stringify({ error: error.message }), { 
       status: 500, 
-      headers: { 'Content-Type': 'application/json' } 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
   }
 })
