@@ -160,7 +160,7 @@ function PlanosAdminPage() {
       </header>
 
       {isAdding && (
-        <div className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-zinc-200 dark:border-white/10 p-8 rounded-[32px] shadow-2xl flex flex-col gap-8 transition-all animate-in slide-in-from-bottom-4">
+        <div className="bg-white backdrop-blur-xl border border-zinc-200 p-8 rounded-[32px] shadow-2xl flex flex-col gap-8 transition-all animate-in slide-in-from-bottom-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center">
               <Wallet className="w-6 h-6" />
@@ -172,23 +172,23 @@ function PlanosAdminPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Nome Comercial</label>
+              <label className="text-sm font-bold text-zinc-700 uppercase tracking-wider">Nome Comercial</label>
               <input 
                 type="text" 
                 disabled={isSaving} 
                 value={formData.name} 
                 onChange={e => setFormData({...formData, name: e.target.value})} 
-                className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 p-4 rounded-2xl text-foreground font-semibold focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
+                className="bg-white border border-zinc-200 p-4 rounded-2xl text-zinc-900 font-semibold focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
                 placeholder="Ex: Kick Básico" 
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Ciclo Asaas</label>
+              <label className="text-sm font-bold text-zinc-700 uppercase tracking-wider">Ciclo Asaas</label>
               <select 
                 disabled={isSaving} 
                 value={formData.billing_cycle} 
                 onChange={e => setFormData({...formData, billing_cycle: e.target.value})} 
-                className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 p-4 rounded-2xl text-foreground font-semibold focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all appearance-none disabled:opacity-50"
+                className="bg-white border border-zinc-200 p-4 rounded-2xl text-zinc-900 font-semibold focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all appearance-none disabled:opacity-50"
               >
                 <option value="MONTHLY">Mensal</option>
                 <option value="QUARTERLY">Trimestral</option>
@@ -197,23 +197,23 @@ function PlanosAdminPage() {
               </select>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Preço Base (R$)</label>
+              <label className="text-sm font-bold text-zinc-700 uppercase tracking-wider">Preço Base (R$)</label>
               <input 
                 type="number" 
                 disabled={isSaving} 
                 value={formData.base_price} 
                 onChange={e => setFormData({...formData, base_price: Number(e.target.value)})} 
-                className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 p-4 rounded-2xl text-foreground font-semibold text-xl focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
+                className="bg-white border border-zinc-200 p-4 rounded-2xl text-zinc-900 font-semibold text-xl focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Por Tela Extra (R$)</label>
+              <label className="text-sm font-bold text-zinc-700 uppercase tracking-wider">Por Tela Extra (R$)</label>
               <input 
                 type="number" 
                 disabled={isSaving} 
                 value={formData.extra_user_price} 
                 onChange={e => setFormData({...formData, extra_user_price: Number(e.target.value)})} 
-                className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 p-4 rounded-2xl text-foreground font-semibold text-xl focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
+                className="bg-white border border-zinc-200 p-4 rounded-2xl text-zinc-900 font-semibold text-xl focus-visible:outline-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50" 
               />
             </div>
           </div>
@@ -229,10 +229,10 @@ function PlanosAdminPage() {
             <label htmlFor="is_active" className="text-base font-bold cursor-pointer">Plano Ativo para Vendas</label>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-end mt-4 pt-6 border-t border-zinc-200 dark:border-white/10">
+          <div className="flex flex-col sm:flex-row gap-4 justify-end mt-4 pt-6 border-t border-zinc-200">
             <button 
               onClick={handleCancel} 
-              className="px-8 py-4 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-2xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors interactive"
+              className="px-8 py-4 bg-zinc-100 text-zinc-900 rounded-2xl font-bold hover:bg-zinc-200 transition-colors interactive"
             >
               Cancelar
             </button>
@@ -254,12 +254,12 @@ function PlanosAdminPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1,2,3].map(i => (
-            <div key={i} className="h-80 bg-zinc-100 dark:bg-zinc-900/50 rounded-[32px] animate-pulse"></div>
+            <div key={i} className="h-80 bg-zinc-100 rounded-[32px] animate-pulse"></div>
           ))}
         </div>
       ) : plans.length === 0 ? (
-        <div className="py-24 text-center flex flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-zinc-900/20 rounded-[32px] border border-dashed border-zinc-300 dark:border-zinc-700">
-          <div className="w-20 h-20 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-zinc-400">
+        <div className="py-24 text-center flex flex-col items-center justify-center gap-4 bg-zinc-50 rounded-[32px] border border-dashed border-zinc-300">
+          <div className="w-20 h-20 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-400">
             <Wallet className="w-10 h-10" />
           </div>
           <h3 className="text-2xl font-bold text-zinc-500">Nenhum plano cadastrado.</h3>
@@ -270,14 +270,14 @@ function PlanosAdminPage() {
           {plans.map(plan => (
             <div 
               key={plan.id} 
-              className={`bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border ${plan.is_active ? 'border-zinc-200 dark:border-white/10' : 'border-red-200 dark:border-red-900/30 opacity-75'} p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col group hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 interactive`}
+              className={`bg-white backdrop-blur-xl border ${plan.is_active ? 'border-zinc-200' : 'border-red-200 opacity-75'} p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex flex-col group hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 interactive`}
             >
               <div className="flex justify-between items-start mb-6">
-                <div className={`w-14 h-14 rounded-[20px] flex items-center justify-center shadow-inner ${plan.is_active ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'}`}>
+                <div className={`w-14 h-14 rounded-[20px] flex items-center justify-center shadow-inner ${plan.is_active ? 'bg-indigo-50 text-indigo-600' : 'bg-zinc-100 text-zinc-400'}`}>
                   <Wallet className="w-7 h-7" />
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
+                  <span className="bg-zinc-100 text-zinc-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
                     {cycleMap[plan.billing_cycle] || plan.billing_cycle}
                   </span>
                   {!plan.is_active && (
@@ -298,9 +298,9 @@ function PlanosAdminPage() {
                 </div>
               </div>
 
-              <div className="mt-auto bg-zinc-50 dark:bg-zinc-950/50 p-5 rounded-[24px] border border-zinc-100 dark:border-white/5 flex flex-col gap-4 mb-6">
+              <div className="mt-auto bg-zinc-50 p-5 rounded-[24px] border border-zinc-100 flex flex-col gap-4 mb-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2 font-semibold">
+                  <span className="text-zinc-500 flex items-center gap-2 font-semibold">
                     <MonitorSmartphone className="w-5 h-5 text-indigo-500" /> 
                     Tela Extra
                   </span>
@@ -311,14 +311,14 @@ function PlanosAdminPage() {
               <div className="flex gap-3">
                 <button 
                   onClick={() => handleEdit(plan)}
-                  className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 interactive"
+                  className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 interactive"
                 >
                   <Edit2 className="w-4 h-4" />
                   Editar
                 </button>
                 <button 
                   onClick={() => handleDelete(plan.id)}
-                  className="w-16 flex-none bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/50 text-red-600 py-4 rounded-2xl font-bold transition-all flex items-center justify-center interactive"
+                  className="w-16 flex-none bg-red-50 hover:bg-red-100 text-red-600 py-4 rounded-2xl font-bold transition-all flex items-center justify-center interactive"
                   title="Excluir Plano"
                 >
                   <Trash2 className="w-5 h-5" />

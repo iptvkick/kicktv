@@ -20,7 +20,7 @@ function UsuariosAdminPage() {
             *,
             subscriptions (
               status,
-              expires_at
+              next_due_date
             )
           `)
         if (data && !error) {
@@ -68,7 +68,7 @@ function UsuariosAdminPage() {
                 users.map(user => {
                   const sub = user.subscriptions && user.subscriptions.length > 0 ? user.subscriptions[0] : null;
                   const status = sub?.status || 'Sem plano';
-                  const expires = sub?.expires_at ? new Date(sub.expires_at).toLocaleDateString('pt-BR') : '-';
+                  const expires = sub?.next_due_date ? new Date(sub.next_due_date).toLocaleDateString('pt-BR') : '-';
                   return (
                     <tr key={user.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="px-6 py-4">
