@@ -85,7 +85,7 @@ function IntegracoesView() {
                 <div className="mt-3 p-3 bg-zinc-50 rounded-lg border border-black/5">
                   <p className="text-xs font-semibold text-zinc-700 mb-1">URL de Produção:</p>
                   <code className="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded break-all">
-                    https://[SEU_PROJETO].supabase.co/functions/v1/asaas-webhook
+                    {import.meta.env.VITE_SUPABASE_URL || 'https://[SEU_PROJETO].supabase.co'}/functions/v1/asaas-webhook
                   </code>
                 </div>
               </div>
