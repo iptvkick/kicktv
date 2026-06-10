@@ -12,33 +12,37 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      asaas_customers: {
+        Row: {
+          asaas_customer_id: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          asaas_customer_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          asaas_customer_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asaas_customers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       devices: {
         Row: {
           created_at: string
@@ -66,6 +70,36 @@ export type Database = {
           instructions?: string
           name?: string
           video_url?: string | null
+        }
+        Relationships: []
+      }
+      integrations: {
+        Row: {
+          api_key: string | null
+          created_at: string
+          credentials: Json | null
+          id: string
+          is_active: boolean | null
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          api_key?: string | null
+          created_at?: string
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          provider: string
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string | null
+          created_at?: string
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          provider?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -106,31 +140,15 @@ export type Database = {
           xtream_password?: string
           xtream_username?: string
         }
-        Relationships: []
-      }
-      integrations: {
-        Row: {
-          id: string
-          provider: string
-          api_key: string | null
-          is_active: boolean
-          credentials: Json | null
-        }
-        Insert: {
-          id?: string
-          provider: string
-          api_key?: string | null
-          is_active?: boolean
-          credentials?: Json | null
-        }
-        Update: {
-          id?: string
-          provider?: string
-          api_key?: string | null
-          is_active?: boolean
-          credentials?: Json | null
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "iptv_subscriptions_dispositivo_principal_fkey"
+            columns: ["dispositivo_principal"]
+            isOneToOne: false
+            referencedRelation: "onboarding_devices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       onboarding_devices: {
         Row: {
@@ -165,27 +183,30 @@ export type Database = {
           description: string
           device_id: string
           id: string
-          youtube_id: string | null
+          media_url: string | null
           order_index: number | null
           title: string
+          youtube_id: string | null
         }
         Insert: {
           created_at?: string | null
           description: string
           device_id: string
           id?: string
-          youtube_id?: string | null
+          media_url?: string | null
           order_index?: number | null
           title: string
+          youtube_id?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string
           device_id?: string
           id?: string
-          youtube_id?: string | null
+          media_url?: string | null
           order_index?: number | null
           title?: string
+          youtube_id?: string | null
         }
         Relationships: [
           {
@@ -383,6 +404,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "subscriptions_dispositivo_principal_fkey"
+            columns: ["dispositivo_principal"]
+            isOneToOne: false
+            referencedRelation: "onboarding_devices"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "subscriptions_plan_id_fkey"
             columns: ["plan_id"]
             isOneToOne: false
@@ -401,6 +429,38 @@ export type Database = {
             columns: ["server_id"]
             isOneToOne: false
             referencedRelation: "servers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          profile_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          profile_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -520,6 +580,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      is_super_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "client"
@@ -650,9 +711,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       app_role: ["admin", "client"],
