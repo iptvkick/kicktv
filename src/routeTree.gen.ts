@@ -27,6 +27,8 @@ import { Route as AdminPlanosRouteImport } from './routes/admin/planos'
 import { Route as AdminOnboardingRouteImport } from './routes/admin/onboarding'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin/integracoes'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin/configuracoes'
+import { Route as AdminClientesIndexRouteImport } from './routes/admin/clientes/index'
+import { Route as AdminClientesIdRouteImport } from './routes/admin/clientes/$id'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -118,6 +120,16 @@ const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminClientesIndexRoute = AdminClientesIndexRouteImport.update({
+  id: '/clientes/',
+  path: '/clientes/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClientesIdRoute = AdminClientesIdRouteImport.update({
+  id: '/clientes/$id',
+  path: '/clientes/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,6 +150,8 @@ export interface FileRoutesByFullPath {
   '/cliente/suporte': typeof ClienteSuporteRoute
   '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/clientes/$id': typeof AdminClientesIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,6 +171,8 @@ export interface FileRoutesByTo {
   '/cliente/suporte': typeof ClienteSuporteRoute
   '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/clientes/$id': typeof AdminClientesIdRoute
+  '/admin/clientes': typeof AdminClientesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,6 +194,8 @@ export interface FileRoutesById {
   '/cliente/suporte': typeof ClienteSuporteRoute
   '/onboarding/tutorial': typeof OnboardingTutorialRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/clientes/$id': typeof AdminClientesIdRoute
+  '/admin/clientes/': typeof AdminClientesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,6 +218,8 @@ export interface FileRouteTypes {
     | '/cliente/suporte'
     | '/onboarding/tutorial'
     | '/admin/'
+    | '/admin/clientes/$id'
+    | '/admin/clientes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -219,6 +239,8 @@ export interface FileRouteTypes {
     | '/cliente/suporte'
     | '/onboarding/tutorial'
     | '/admin'
+    | '/admin/clientes/$id'
+    | '/admin/clientes'
   id:
     | '__root__'
     | '/'
@@ -239,6 +261,8 @@ export interface FileRouteTypes {
     | '/cliente/suporte'
     | '/onboarding/tutorial'
     | '/admin/'
+    | '/admin/clientes/$id'
+    | '/admin/clientes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -379,6 +403,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/clientes/': {
+      id: '/admin/clientes/'
+      path: '/clientes'
+      fullPath: '/admin/clientes/'
+      preLoaderRoute: typeof AdminClientesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/clientes/$id': {
+      id: '/admin/clientes/$id'
+      path: '/clientes/$id'
+      fullPath: '/admin/clientes/$id'
+      preLoaderRoute: typeof AdminClientesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -390,6 +428,8 @@ interface AdminRouteChildren {
   AdminServidoresRoute: typeof AdminServidoresRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminClientesIdRoute: typeof AdminClientesIdRoute
+  AdminClientesIndexRoute: typeof AdminClientesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -400,6 +440,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminServidoresRoute: AdminServidoresRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminClientesIdRoute: AdminClientesIdRoute,
+  AdminClientesIndexRoute: AdminClientesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

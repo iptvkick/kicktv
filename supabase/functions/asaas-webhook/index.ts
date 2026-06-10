@@ -47,8 +47,73 @@ serve(async (req) => {
       return new Response('Unauthorized', { status: 401, headers: corsHeaders })
     }
 
-    // Retornar 200 { success: true } conforme a Fase 2 da Spec 016
-    // (a lógica de negócio do webhook será inserida no futuro)
+    const body = await req.json()
+    console.log('Webhook payload:', body)
+
+    const { event, payment } = body
+
+    if (payment && payment.subscription) {
+      const { data: subData } = await supabaseAdmin
+        .from('subscriptions')
+        .select('id')
+        .eq('asaas_subscription_id', payment.subscription)
+        .maybeSingle()
+
+      if (subData) {
+        let invoiceStatus = 'PENDING'
+        if (['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH'].includes(payment.status)) {
+          invoiceStatus = 'RECEIVED'
+        } else if (payment.status === 'OVERDUE') {
+          invoiceStatus = 'OVERDUE'
+        }
+
+        const { data: existingInvoice } = await supabaseAdmin
+          .from('invoices')
+          .select('id')
+          .eq('asaas_payment_id', payment.id)
+          .maybeSingle()
+
+        if (existingInvoice) {
+          await supabaseAdmin
+            .from('invoices')
+            .update({
+              amount: payment.value,
+              due_date: payment.dueDate,
+              status: invoiceStatus
+            })
+            .eq('id', existingInvoice.id)
+        } else {
+          await supabaseAdmin
+            .from('invoices')
+            .insert({
+              subscription_id: subData.id,
+              asaas_payment_id: payment.id,
+              amount: payment.value,
+              due_date: payment.dueDate,
+              status: invoiceStatus
+            })
+        }
+
+        const updates: any = {}
+        if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
+          updates.status = 'ACTIVE'
+        } else if (event === 'PAYMENT_OVERDUE') {
+          updates.status = 'OVERDUE'
+        }
+
+        if (payment.status === 'PENDING' && (event === 'PAYMENT_CREATED' || event === 'PAYMENT_UPDATED')) {
+          updates.next_due_date = payment.dueDate
+        }
+
+        if (Object.keys(updates).length > 0) {
+          await supabaseAdmin
+            .from('subscriptions')
+            .update(updates)
+            .eq('id', subData.id)
+        }
+      }
+    }
+
     return new Response(JSON.stringify({ success: true }), { 
       status: 200, 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
