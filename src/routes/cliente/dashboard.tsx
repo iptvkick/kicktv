@@ -46,7 +46,7 @@ function DashboardPage() {
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(1)
-          .maybeSingle();
+          .maybeSingle() as { data: any };
 
         setSubscription(subData);
 
@@ -72,8 +72,8 @@ function DashboardPage() {
   const handleSelectDevice = async (deviceId: string) => {
     if (!subscription) return;
     setSelectingDevice(true);
-    const { error } = await supabase
-      .from('subscriptions')
+    const { error } = await (supabase
+      .from('subscriptions') as any)
       .update({ dispositivo_principal: deviceId })
       .eq('id', subscription.id);
     

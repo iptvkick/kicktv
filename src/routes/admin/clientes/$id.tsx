@@ -28,7 +28,7 @@ function ClienteXRayPage() {
       const { data: sub } = await supabase.from('subscriptions').select('*, plans(*)').eq('user_id', id).maybeSingle()
       setSubscription(sub)
 
-      const { data: inv } = await supabase.from('invoices').select('*').eq('user_id', id).order('created_at', { ascending: false })
+      const { data: inv } = await (supabase.from('invoices') as any).select('*').eq('user_id', id).order('created_at', { ascending: false })
       setInvoices(inv || [])
     } catch (err) {
       console.error(err)
