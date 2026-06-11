@@ -2,7 +2,7 @@ import { createFileRoute, redirect, Link, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { CreditCard, CheckCircle2, Copy, Check, ArrowLeft, Loader2, Minus, Plus, PlayCircle, RefreshCcw } from "lucide-react";
+import { CreditCard, CheckCircle2, Copy, Check, ArrowLeft, Loader2, Minus, Plus, PlayCircle, RefreshCcw, Clock, XCircle } from "lucide-react";
 import { CheckoutSimulator } from "@/components/sandbox/CheckoutSimulator";
 
 export const Route = createFileRoute("/cliente/assinatura")({

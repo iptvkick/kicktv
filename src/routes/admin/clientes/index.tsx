@@ -198,7 +198,8 @@ function ClientesAdminPage() {
                     </td>
                     <td className="px-6 py-5 text-right">
                       <Link 
-                        to={`/admin/clientes/${cliente.id}`}
+                        to="/admin/clientes/$id"
+                        params={{ id: cliente.id }}
                         className="inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-xl text-zinc-500 hover:text-indigo-600 hover:border-indigo-600 hover:shadow-sm transition-all group-hover:scale-105"
                       >
                         <ChevronRight className="w-5 h-5" />

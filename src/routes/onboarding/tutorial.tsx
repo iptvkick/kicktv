@@ -70,7 +70,7 @@ function OnboardingFlow() {
       if (collectedName.trim()) {
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
-          await supabase.from('profiles').upsert(
+          await (supabase.from('profiles') as any).upsert(
             { id: user.id, full_name: collectedName.trim() },
             { onConflict: 'id' }
           )
