@@ -51,9 +51,9 @@ function LandingPage() {
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 pt-32 pb-24 space-y-32">
+      <main className="max-w-6xl mx-auto px-6 pt-24 pb-16 space-y-16">
         {/* Hero Section */}
-        <section className="text-center space-y-8 max-w-3xl mx-auto mt-12">
+        <section className="text-center space-y-8 max-w-3xl mx-auto mt-4">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
